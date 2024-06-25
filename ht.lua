@@ -16,6 +16,88 @@ Servo.SetParam = function(group, index, value)
 	SRV_PARA(group, index, value)
 end
 
+-- 检查参数。参数不对会设置参数后重启伺服。
+Servo.CheckParam = function()
+	local should_restart = false
+
+	-- 定位运行模式
+	if (Servo.GetParam(1, 1) ~= 7) then
+		Servo.SetParam(1, 1, 7)
+		should_restart = true
+	end
+
+	-- 速度控制时加减速有效
+	if (Servo.GetParam(1, 36) ~= 1) then
+		Servo.SetParam(1, 36, 1)
+		should_restart = true
+	end
+
+	-- 内部定位数据无效
+	if (Servo.GetParam(2, 40) ~= 0) then
+		Servo.SetParam(2, 40, 0)
+		should_restart = true
+	end
+
+	-- 模式 7 时，准备一个 EI，设置为 36 号选项，此 EI 为 ON 时，进入速度控制模式。
+	-- 这里准备 EI1。
+	-- 此时可以接受正转，反转的点动。
+	if (Servo.GetParam(3, 1) ~= 36) then
+		Servo.SetParam(3, 1, 36)
+		should_restart = true
+	end
+	-- EI2 设置为正转
+	if (Servo.GetParam(3, 2) ~= 2) then
+		Servo.SetParam(3, 2, 2)
+		should_restart = true
+	end
+	-- EI3 设置为反转
+	if (Servo.GetParam(3, 3) ~= 3) then
+		Servo.SetParam(3, 3, 3)
+		should_restart = true
+	end
+
+	-- EI9 配置为使能
+	if (Servo.GetParam(3, 9) ~= 1) then
+		Servo.SetParam(3, 9, 1)
+		should_restart = true
+	end
+
+	-- EI10 配置为定位数据启动
+	if (Servo.GetParam(3, 10) ~= 4) then
+		Servo.SetParam(3, 10, 4)
+		should_restart = true
+	end
+
+	-- EI11 设置为位置预置功能
+	if (Servo.GetParam(3, 11) ~= 16) then
+		Servo.SetParam(3, 11, 16)
+		should_restart = true
+	end
+
+	-- EI12 设置为立即值变更指令
+	if (Servo.GetParam(3, 12) ~= 23) then
+		Servo.SetParam(3, 12, 23)
+		should_restart = true
+	end
+
+	-- EI13 设置为临时停止
+	if (Servo.GetParam(3, 13) ~= 31) then
+		Servo.SetParam(3, 13, 31)
+		should_restart = true
+	end
+
+	-- EI14 设置为定位取消
+	if (Servo.GetParam(3, 14) ~= 32) then
+		Servo.SetParam(3, 14, 32)
+		should_restart = true
+	end
+
+	-- 重启
+	if (should_restart) then
+		Servo.Restart()
+	end
+end
+
 -- 获取 EI
 Servo.GetEI = function(ei_index)
 	return SRV_EI(ei_index)
@@ -63,6 +145,16 @@ end
 -- 设置相对位置。需要启动定位运行才会真正运行，否则只是设置一个立即数。
 Servo.SetRelativePosition = function(value)
 	AXIS_MOVE(value)
+end
+
+-- 使能
+Servo.Enable = function()
+	Servo.SetEI(9, 1)
+end
+
+-- 失能
+Servo.Disable = function()
+	Servo.SetEI(9, 0)
 end
 
 --#endregion
@@ -273,17 +365,32 @@ end
 -- 线轴
 Reel = {}
 
+-- 从满卷到空卷的圈数
+Reel.N = function()
+	return 100
+end
+
+-- 空卷周长。单位：米
+Reel.C0 = function()
+	return 740 * 1e-3
+end
+
+-- 满卷周长。单位：米
+Reel.C1 = function()
+	return 2533.2248 * 1e-3
+end
+
 -- 空卷半径
 Reel.R0 = function()
-	return C0() / (2 * Base.PI)
+	return Reel.C0() / (2 * Base.PI)
 end
 
 -- 满卷半径
 Reel.R1 = function()
-	return C1() / (2 * Base.PI)
+	return Reel.C1() / (2 * Base.PI)
 end
 
--- 获取线轴当前放出的圈数
+-- 获取线轴当前已经放出的圈数
 Reel.n = function()
 	local encoder_rotations = Encoder.TotalPulseCache() / Encoder.PulsePerRotation()
 
@@ -295,38 +402,17 @@ end
 -- 在当前位置的基础上，线轴再转一圈放出的弧长
 Reel.DeltaS = function()
 	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
-	return 2 * Base.PI * (Reel.R1() - Reel.n() * (Reel.R1() - Reel.R0()) / N())
+	return 2 * Base.PI * (Reel.R1() - Reel.n() * (Reel.R1() - Reel.R0()) / Reel.N())
 end
 
 --#endregion
 
 --#region 电子齿轮比计算
 
---#region 电子齿轮比计算接口函数
-
-
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 function ReductionRatio()
 	return 100
 end
-
--- 从满卷到空卷的圈数
-function N()
-	return 100
-end
-
--- 空卷周长。单位：米
-function C0()
-	return 740 * 1e-3
-end
-
--- 满卷周长。单位：米
-function C1()
-	return 2533.2248 * 1e-3
-end
-
---#endregion
-
 
 -- 获取收线机收每米线输入多少个脉冲
 function InputPulsePerMetre()
@@ -353,10 +439,6 @@ end
 -- 获取电子齿轮比。电子齿轮比 = 编码器脉冲个数 / 输入脉冲个数
 function Gear()
 	local gear = EncoderPulsePerReelRatation() / InputPulsePerDeltaS()
-	if (gear == 0) then
-		gear = 1
-	end
-
 	return gear
 end
 
@@ -379,99 +461,9 @@ end
 
 --#endregion
 
--- 检查参数。参数不对会设置参数后重启伺服。
-function CheckParam()
-	local should_restart = false
-
-	-- 定位运行模式
-	if (Servo.GetParam(1, 1) ~= 7) then
-		Servo.SetParam(1, 1, 7)
-		should_restart = true
-	end
-
-	-- 速度控制时加减速有效无效
-	if (Servo.GetParam(1, 36) ~= 1) then
-		Servo.SetParam(1, 36, 1)
-		should_restart = true
-	end
-
-	-- 内部定位数据无效
-	if (Servo.GetParam(2, 40) ~= 0) then
-		Servo.SetParam(2, 40, 0)
-		should_restart = true
-	end
-
-	-- 模式 7 时，准备一个 EI，设置为 36 号选项，此 EI 为 ON 时，进入速度控制模式。
-	-- 这里准备 EI1。
-	-- 此时可以接受正转，反转的点动。
-	if (Servo.GetParam(3, 1) ~= 36) then
-		Servo.SetParam(3, 1, 36)
-		should_restart = true
-	end
-	-- EI2 设置为正转
-	if (Servo.GetParam(3, 2) ~= 2) then
-		Servo.SetParam(3, 2, 2)
-		should_restart = true
-	end
-	-- EI3 设置为反转
-	if (Servo.GetParam(3, 3) ~= 3) then
-		Servo.SetParam(3, 3, 3)
-		should_restart = true
-	end
-
-	-- EI9 配置为使能
-	if (Servo.GetParam(3, 9) ~= 1) then
-		Servo.SetParam(3, 9, 1)
-		should_restart = true
-	end
-
-	-- EI10 配置为定位数据启动
-	if (Servo.GetParam(3, 10) ~= 4) then
-		Servo.SetParam(3, 10, 4)
-		should_restart = true
-	end
-
-	-- EI11 设置为位置预置功能
-	if (Servo.GetParam(3, 11) ~= 16) then
-		Servo.SetParam(3, 11, 16)
-		should_restart = true
-	end
-
-	-- EI12 设置为立即值变更指令
-	if (Servo.GetParam(3, 12) ~= 23) then
-		Servo.SetParam(3, 12, 23)
-		should_restart = true
-	end
-
-	-- EI13 设置为临时停止
-	if (Servo.GetParam(3, 13) ~= 31) then
-		Servo.SetParam(3, 13, 31)
-		should_restart = true
-	end
-
-	-- EI14 设置为定位取消
-	if (Servo.GetParam(3, 14) ~= 32) then
-		Servo.SetParam(3, 14, 32)
-		should_restart = true
-	end
-
-	-- 重启
-	if (should_restart) then
-		Servo.Restart()
-	end
-end
-
-function EnableServo()
-	Servo.SetEI(9, 1)
-end
-
-function DisableServo()
-	Servo.SetEI(9, 0)
-end
-
 --#region 主程序
-CheckParam()
-EnableServo()
+Servo.CheckParam()
+Servo.Enable()
 Delay(1000)
 Servo.SetEI(10, 0)
 Servo.SetEI(13, 0)
