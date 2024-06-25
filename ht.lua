@@ -184,7 +184,7 @@ end
 --#region 编码器累计脉冲数
 
 -- 获取储存在非易失储存器的的编码器累计脉冲数
-function Encoder_CumulativePulseCache()
+function EncoderCumulativePulseCache()
 	return DD(100)
 end
 
@@ -205,13 +205,13 @@ end
 -- 总的编码器脉冲数缓存
 -- 总的缓存 = 累计缓存 + 偏移量缓存
 function Encoder_TotalPulseCache()
-	return Encoder_CumulativePulseCache() + Encoder_CumulativePulseOffsetCache()
+	return EncoderCumulativePulseCache() + Encoder_CumulativePulseOffsetCache()
 end
 
 -- 初始化时更新总的编码器脉冲数缓存
 function UpdataEncoderTotalPulseCacheInInit()
 	local pulse_offset_cache = Encoder_CumulativePulseOffsetCache()
-	local cumulative_pulse_cache = Encoder_CumulativePulseCache()
+	local cumulative_pulse_cache = EncoderCumulativePulseCache()
 	local cumulative_pulse = GetEncoderCumulativePulse()
 
 	-- 上电后，理论的 cumulative_pulse 应该是 0，但是实际上可能因为振动或其他原因，
@@ -237,7 +237,7 @@ function UpdataEncoderTotalPulseCacheInLoop()
 	-- 将值转移给 pulse_offset_cache 后，cumulative_pulse_cache 就可以继续跟踪 cumulative_pulse
 
 	local pulse_offset_cache = Encoder_CumulativePulseOffsetCache()
-	local cumulative_pulse_cache = Encoder_CumulativePulseCache()
+	local cumulative_pulse_cache = EncoderCumulativePulseCache()
 	local cumulative_pulse = GetEncoderCumulativePulse()
 	local delta_cumulative_pulse = cumulative_pulse - cumulative_pulse_cache
 
@@ -270,77 +270,77 @@ function Encoder_PulsePerRotation()
 end
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
-function GetReductionRatio()
+function ReductionRatio()
 	return 100
 end
 
 -- 从满卷到空卷的圈数
-function Get_N()
+function N()
 	return 100
 end
 
 -- 空卷周长。单位：米
-function Get_c0()
+function C0()
 	return 740 * 1e-3
 end
 
 -- 满卷周长。单位：米
-function Get_c1()
+function C1()
 	return 2533.2248 * 1e-3
 end
 
 --#endregion
 
 -- 空卷半径
-function Get_r0()
-	return Get_c0() / (2 * PI)
+function R0()
+	return C0() / (2 * PI)
 end
 
 -- 满卷半径
-function Get_r1()
-	return Get_c1() / (2 * PI)
+function R1()
+	return C1() / (2 * PI)
 end
 
 -- 获取线轴当前放出的圈数
-function Get_n()
+function n()
 	local encoder_rotations = Encoder_TotalPulseCache() / Encoder_PulsePerRotation()
 
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 线轴转的圈数 = 电机转的圈数 / 减速比
-	return encoder_rotations / GetReductionRatio()
+	return encoder_rotations / ReductionRatio()
 end
 
 -- 在当前位置的基础上，线轴再转一圈放出的弧长
 function DeltaS()
 	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
-	return 2 * PI * (Get_r1() - Get_n() * (Get_r1() - Get_r0()) / Get_N())
+	return 2 * PI * (R1() - n() * (R1() - R0()) / N())
 end
 
 -- 获取收线机收每米线输入多少个脉冲
-function GetInputPulseCountPerMetre()
+function InputPulsePerMetre()
 	return 100
 end
 
 -- 获取放完这一圈的线，需要收线机输入多少个脉冲
-function GetInputPulseCountForDeltaS()
-	return DeltaS() * GetInputPulseCountPerMetre()
+function InputPulsePerDeltaS()
+	return DeltaS() * InputPulsePerMetre()
 end
 
 -- 获取放线轴每转一圈，编码器需要转多少圈
-function GetEncoderRotationsPerReelRotation()
+function EncoderRotationsPerReelRotation()
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 电机转的圈数 = 减速比 * 线轴转的圈数
-	return GetReductionRatio() * 1
+	return ReductionRatio() * 1
 end
 
 -- 获取放线轴每转一圈，编码器产生多少个脉冲
-function GetEncoderPulseCountPerReelRatation()
-	return GetEncoderRotationsPerReelRotation() * Encoder_PulsePerRotation()
+function EncoderPulsePerReelRatation()
+	return EncoderRotationsPerReelRotation() * Encoder_PulsePerRotation()
 end
 
 -- 获取电子齿轮比。电子齿轮比 = 编码器脉冲个数 / 输入脉冲个数
-function GetGear()
-	local gear = GetEncoderPulseCountPerReelRatation() / GetInputPulseCountForDeltaS()
+function Gear()
+	local gear = EncoderPulsePerReelRatation() / InputPulsePerDeltaS()
 	if (gear == 0) then
 		gear = 1
 	end
@@ -349,8 +349,8 @@ function GetGear()
 end
 
 -- 将浮点的电子齿轮比转为分数
-function GetFractionGear()
-	local gear = GetGear()
+function FractionGear()
+	local gear = Gear()
 	local gain = NumberToInteger(IntegerPow(2, 22) / gear)
 	local fraction = {}
 	fraction[0] = NumberToInteger(gear * gain);
@@ -360,7 +360,7 @@ end
 
 -- 计算电子齿轮比，并更新伺服参数
 function UpdataFractionGear()
-	local fraction_gear = GetFractionGear()
+	local fraction_gear = FractionGear()
 	SetServoParam(1, 6, fraction_gear[0])
 	SetServoParam(1, 7, fraction_gear[1])
 end
