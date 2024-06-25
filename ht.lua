@@ -455,7 +455,7 @@ Transmission.FractionGear = function()
 end
 
 -- 计算电子齿轮比，并更新伺服参数
-function UpdataFractionGear()
+Transmission.UpdataFractionGear = function()
 	local fraction_gear = Transmission.FractionGear()
 	Servo.SetParam(1, 6, fraction_gear[0])
 	Servo.SetParam(1, 7, fraction_gear[1])
@@ -484,7 +484,7 @@ local timer1_context = Timer.New(
 	10 * 1000,
 	true,
 	function()
-		UpdataFractionGear()
+		Transmission.UpdataFractionGear()
 		Servo.SetRelativePosition(10 * 1000)
 		Servo.TriggerEIRisingEdge(10)
 	end
