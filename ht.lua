@@ -396,7 +396,7 @@ Reel.n = function()
 
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 线轴转的圈数 = 电机转的圈数 / 减速比
-	return encoder_rotations / ReductionRatio()
+	return encoder_rotations / Transmission.ReductionRatio()
 end
 
 -- 在当前位置的基础上，线轴再转一圈放出的弧长
@@ -407,44 +407,46 @@ end
 
 --#endregion
 
---#region 电子齿轮比计算
+--#region Transmission
+-- 传动
+Transmission = {}
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
-function ReductionRatio()
+Transmission.ReductionRatio = function()
 	return 100
 end
 
 -- 获取收线机收每米线输入多少个脉冲
-function InputPulsePerMetre()
+Transmission.InputPulsePerMetre = function()
 	return 100
 end
 
 -- 获取放完这一圈的线，需要收线机输入多少个脉冲
-function InputPulsePerDeltaS()
-	return Reel.DeltaS() * InputPulsePerMetre()
+Transmission.InputPulsePerDeltaS = function()
+	return Reel.DeltaS() * Transmission.InputPulsePerMetre()
 end
 
 -- 获取放线轴每转一圈，编码器需要转多少圈
-function EncoderRotationsPerReelRotation()
+Transmission.EncoderRotationsPerReelRotation = function()
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 电机转的圈数 = 减速比 * 线轴转的圈数
-	return ReductionRatio() * 1
+	return Transmission.ReductionRatio() * 1
 end
 
 -- 获取放线轴每转一圈，编码器产生多少个脉冲
-function EncoderPulsePerReelRatation()
-	return EncoderRotationsPerReelRotation() * Encoder.PulsePerRotation()
+Transmission.EncoderPulsePerReelRatation = function()
+	return Transmission.EncoderRotationsPerReelRotation() * Encoder.PulsePerRotation()
 end
 
 -- 获取电子齿轮比。电子齿轮比 = 编码器脉冲个数 / 输入脉冲个数
-function Gear()
-	local gear = EncoderPulsePerReelRatation() / InputPulsePerDeltaS()
+Transmission.Gear = function()
+	local gear = Transmission.EncoderPulsePerReelRatation() / Transmission.InputPulsePerDeltaS()
 	return gear
 end
 
 -- 将浮点的电子齿轮比转为分数
-function FractionGear()
-	local gear = Gear()
+Transmission.FractionGear = function()
+	local gear = Transmission.Gear()
 	local gain = Base.NumberToInteger(Base.IntegerPow(2, 22) / gear)
 	local fraction = {}
 	fraction[0] = Base.NumberToInteger(gear * gain);
@@ -454,7 +456,7 @@ end
 
 -- 计算电子齿轮比，并更新伺服参数
 function UpdataFractionGear()
-	local fraction_gear = FractionGear()
+	local fraction_gear = Transmission.FractionGear()
 	Servo.SetParam(1, 6, fraction_gear[0])
 	Servo.SetParam(1, 7, fraction_gear[1])
 end
