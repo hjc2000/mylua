@@ -269,6 +269,37 @@ end
 
 --#endregion
 
+--#region Reel
+-- 线轴
+Reel = {}
+
+-- 空卷半径
+Reel.R0 = function()
+	return C0() / (2 * Base.PI)
+end
+
+-- 满卷半径
+Reel.R1 = function()
+	return C1() / (2 * Base.PI)
+end
+
+-- 获取线轴当前放出的圈数
+Reel.n = function()
+	local encoder_rotations = Encoder.TotalPulseCache() / Encoder.PulsePerRotation()
+
+	-- 减速比 = 电机转的圈数 / 线轴转的圈数
+	-- 线轴转的圈数 = 电机转的圈数 / 减速比
+	return encoder_rotations / ReductionRatio()
+end
+
+-- 在当前位置的基础上，线轴再转一圈放出的弧长
+Reel.DeltaS = function()
+	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
+	return 2 * Base.PI * (Reel.R1() - Reel.n() * (Reel.R1() - Reel.R0()) / N())
+end
+
+--#endregion
+
 --#region 电子齿轮比计算
 
 --#region 电子齿轮比计算接口函数
@@ -296,30 +327,6 @@ end
 
 --#endregion
 
--- 空卷半径
-function R0()
-	return C0() / (2 * Base.PI)
-end
-
--- 满卷半径
-function R1()
-	return C1() / (2 * Base.PI)
-end
-
--- 获取线轴当前放出的圈数
-function n()
-	local encoder_rotations = Encoder.TotalPulseCache() / Encoder.PulsePerRotation()
-
-	-- 减速比 = 电机转的圈数 / 线轴转的圈数
-	-- 线轴转的圈数 = 电机转的圈数 / 减速比
-	return encoder_rotations / ReductionRatio()
-end
-
--- 在当前位置的基础上，线轴再转一圈放出的弧长
-function DeltaS()
-	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
-	return 2 * Base.PI * (R1() - n() * (R1() - R0()) / N())
-end
 
 -- 获取收线机收每米线输入多少个脉冲
 function InputPulsePerMetre()
@@ -328,7 +335,7 @@ end
 
 -- 获取放完这一圈的线，需要收线机输入多少个脉冲
 function InputPulsePerDeltaS()
-	return DeltaS() * InputPulsePerMetre()
+	return Reel.DeltaS() * InputPulsePerMetre()
 end
 
 -- 获取放线轴每转一圈，编码器需要转多少圈
