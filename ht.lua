@@ -72,7 +72,7 @@ Servo.CheckParam = function()
 		Servo.SetParam(3, 9, 1)
 		should_restart = true
 	end
-	-- EI10 设置为位置预置功能
+	-- EI10 配置为位置预置功能
 	if (Servo.GetParam(3, 10) ~= 16) then
 		Servo.SetParam(3, 10, 16)
 		should_restart = true
@@ -82,12 +82,12 @@ Servo.CheckParam = function()
 		Servo.SetParam(3, 11, 36)
 		should_restart = true
 	end
-	-- EI12 设置为正转
+	-- EI12 配置为正转
 	if (Servo.GetParam(3, 12) ~= 2) then
 		Servo.SetParam(3, 12, 2)
 		should_restart = true
 	end
-	-- EI13 设置为反转
+	-- EI13 配置为反转
 	if (Servo.GetParam(3, 13) ~= 3) then
 		Servo.SetParam(3, 13, 3)
 		should_restart = true
@@ -373,6 +373,15 @@ Encoder.UpdataTotalPulseCacheInLoop = function()
 	end
 end
 
+-- 重置编码器的累计脉冲数，连同累计脉冲缓存和累计脉冲偏移量缓存一起清 0.
+Encoder.ResetPosition = function()
+	DD(100, 0)
+	DD(101, 0)
+	DD(102, 0)
+
+	-- 位置预置
+	Servo.TriggerEIRisingEdge(10)
+end
 --#endregion
 
 --#region Base
@@ -497,9 +506,6 @@ end
 
 --#region 主程序
 Servo.CheckParam()
--- DD(100, 0)
--- DD(101, 0)
--- DD(102, 0)
 Servo.Enable()
 
 -- 位置预置
