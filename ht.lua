@@ -377,9 +377,9 @@ end
 Encoder.ResetPosition = function()
 	-- 位置预置
 	Servo.TriggerEIRisingEdge(10)
-	DD(100, 0)
-	DD(101, 0)
-	DD(102, 0)
+	DD(100, math.floor(0))
+	DD(101, math.floor(0))
+	DD(102, math.floor(0))
 end
 --#endregion
 
@@ -405,19 +405,19 @@ end
 -- 线轴
 Reel = {}
 
--- 从满卷到空卷的圈数
-Reel.N = function()
-	return 100
-end
-
 -- 空卷周长。单位：米
 Reel.C0 = function()
-	return 740 * 1e-3
+	return DF(105)
 end
 
 -- 满卷周长。单位：米
 Reel.C1 = function()
-	return 2533.2248 * 1e-3
+	return DF(106)
+end
+
+-- 从满卷到空卷的圈数
+Reel.N = function()
+	return DD(107)
 end
 
 -- 空卷半径
@@ -453,12 +453,12 @@ Transmission = {}
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 Transmission.ReductionRatio = function()
-	return 100
+	return DD(103) / DD(104)
 end
 
 -- 获取收线机收每米线输入多少个脉冲
 Transmission.InputPulsePerMetre = function()
-	return 100
+	return DD(108)
 end
 
 -- 获取放完这一圈的线，需要收线机输入多少个脉冲
@@ -516,12 +516,21 @@ local timer1_context = Timer.New(
 		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
 		Encoder.UpdataTotalPulseCacheInLoop()
 		Transmission.UpdataFractionGear()
+
+		-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
+		DD(1, math.floor(Reel.n()))
 	end
 )
 Timer.Start(timer1_context, true)
 
 while (true)
 do
+	if (M(1)) then
+		-- 检测到触摸屏将 M1 置 1，重置编码器位置，并将 M1 置 0.
+		Encoder.ResetPosition()
+		M(1, 0)
+	end
+
 	Timer.Check(timer1_context)
 end
 --#endregion 主程序
