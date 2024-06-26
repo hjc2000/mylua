@@ -313,8 +313,8 @@ end
 
 -- 设置储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.SetCumulativePulseOffsetCache = function(value)
-	DD(1, math.floor(value % 2147483648))
-	DD(1, math.floor(value / 2147483648))
+	DD(101, math.floor(value % 2147483648))
+	DD(102, math.floor(value / 2147483648))
 end
 
 -- 总的编码器脉冲数缓存
