@@ -377,6 +377,8 @@ end
 Encoder.ResetPosition = function()
 	-- 位置预置
 	Servo.TriggerEIRisingEdge(10)
+
+	-- 清除缓存
 	DD(100, 0)
 	DD(101, 0)
 	DD(102, 0)
