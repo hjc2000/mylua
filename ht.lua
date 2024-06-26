@@ -38,59 +38,116 @@ Servo.CheckParam = function()
 		should_restart = true
 	end
 
-	-- 模式 7 时，准备一个 EI，设置为 36 号选项，此 EI 为 ON 时，进入速度控制模式。
-	-- 这里准备 EI1。
-	-- 此时可以接受正转，反转的点动。
-	if (Servo.GetParam(3, 1) ~= 36) then
-		Servo.SetParam(3, 1, 36)
+	--#region 硬件 EI 分配
+	-- EI1
+	if (Servo.GetParam(3, 1) ~= 0) then
+		Servo.SetParam(3, 1, 0)
 		should_restart = true
 	end
-	-- EI2 设置为正转
-	if (Servo.GetParam(3, 2) ~= 2) then
-		Servo.SetParam(3, 2, 2)
+	-- EI2
+	if (Servo.GetParam(3, 2) ~= 0) then
+		Servo.SetParam(3, 2, 0)
 		should_restart = true
 	end
-	-- EI3 设置为反转
-	if (Servo.GetParam(3, 3) ~= 3) then
-		Servo.SetParam(3, 3, 3)
+	-- EI3
+	if (Servo.GetParam(3, 3) ~= 0) then
+		Servo.SetParam(3, 3, 0)
 		should_restart = true
 	end
+	-- EI4
+	if (Servo.GetParam(3, 4) ~= 0) then
+		Servo.SetParam(3, 4, 0)
+		should_restart = true
+	end
+	-- EI5
+	if (Servo.GetParam(3, 5) ~= 0) then
+		Servo.SetParam(3, 5, 0)
+		should_restart = true
+	end
+	--#endregion
 
+	--#region 通信 EI 分配
 	-- EI9 配置为使能
 	if (Servo.GetParam(3, 9) ~= 1) then
 		Servo.SetParam(3, 9, 1)
 		should_restart = true
 	end
-
-	-- EI10 配置为定位数据启动
-	if (Servo.GetParam(3, 10) ~= 4) then
-		Servo.SetParam(3, 10, 4)
+	-- EI10 设置为位置预置功能
+	if (Servo.GetParam(3, 10) ~= 16) then
+		Servo.SetParam(3, 10, 16)
 		should_restart = true
 	end
-
-	-- EI11 设置为位置预置功能
-	if (Servo.GetParam(3, 11) ~= 16) then
-		Servo.SetParam(3, 11, 16)
+	-- EI11 配置为控制模式切换。为 ON 时进入速度控制模式，此时可以点动。
+	if (Servo.GetParam(3, 11) ~= 36) then
+		Servo.SetParam(3, 11, 36)
 		should_restart = true
 	end
-
-	-- EI12 设置为立即值变更指令
-	if (Servo.GetParam(3, 12) ~= 23) then
-		Servo.SetParam(3, 12, 23)
+	-- EI12 设置为正转
+	if (Servo.GetParam(3, 12) ~= 2) then
+		Servo.SetParam(3, 12, 2)
 		should_restart = true
 	end
-
-	-- EI13 设置为临时停止
-	if (Servo.GetParam(3, 13) ~= 31) then
-		Servo.SetParam(3, 13, 31)
+	-- EI13 设置为反转
+	if (Servo.GetParam(3, 13) ~= 3) then
+		Servo.SetParam(3, 13, 3)
 		should_restart = true
 	end
-
-	-- EI14 设置为定位取消
-	if (Servo.GetParam(3, 14) ~= 32) then
-		Servo.SetParam(3, 14, 32)
+	-- EI14
+	if (Servo.GetParam(3, 14) ~= 0) then
+		Servo.SetParam(3, 14, 0)
 		should_restart = true
 	end
+	-- EI15
+	if (Servo.GetParam(3, 15) ~= 0) then
+		Servo.SetParam(3, 15, 0)
+		should_restart = true
+	end
+	-- EI16
+	if (Servo.GetParam(3, 16) ~= 0) then
+		Servo.SetParam(3, 16, 0)
+		should_restart = true
+	end
+	-- EI17
+	if (Servo.GetParam(3, 17) ~= 0) then
+		Servo.SetParam(3, 17, 0)
+		should_restart = true
+	end
+	-- EI18
+	if (Servo.GetParam(3, 18) ~= 0) then
+		Servo.SetParam(3, 18, 0)
+		should_restart = true
+	end
+	-- EI19
+	if (Servo.GetParam(3, 19) ~= 0) then
+		Servo.SetParam(3, 19, 0)
+		should_restart = true
+	end
+	-- EI20
+	if (Servo.GetParam(3, 20) ~= 0) then
+		Servo.SetParam(3, 20, 0)
+		should_restart = true
+	end
+	-- EI21
+	if (Servo.GetParam(3, 21) ~= 0) then
+		Servo.SetParam(3, 21, 0)
+		should_restart = true
+	end
+	-- EI22
+	if (Servo.GetParam(3, 22) ~= 0) then
+		Servo.SetParam(3, 22, 0)
+		should_restart = true
+	end
+	-- EI23
+	if (Servo.GetParam(3, 23) ~= 0) then
+		Servo.SetParam(3, 23, 0)
+		should_restart = true
+	end
+	-- EI24
+	if (Servo.GetParam(3, 24) ~= 0) then
+		Servo.SetParam(3, 24, 0)
+		should_restart = true
+	end
+	--#endregion
 
 	-- 重启
 	if (should_restart) then
@@ -119,7 +176,7 @@ end
 
 -- 重启伺服
 Servo.Restart = function()
-	Servo.Servo.SetParam(3, 98, 9999)
+	Servo.SetParam(3, 98, 9999)
 end
 
 -- 设置转速
