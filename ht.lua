@@ -303,18 +303,22 @@ end
 
 -- 设置储存在非易失储存器的的编码器累计脉冲数
 Encoder.SetCumulativePulseCache = function(value)
-	DD(100, value)
+	DD(100, Base.NumberToInteger(value))
 end
 
 -- 获取储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.CumulativePulseOffsetCache = function()
+	-- return DD(101) + DD(102) * 2147483648
 	return DD(101) + DD(102) * 2147483648
 end
 
 -- 设置储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.SetCumulativePulseOffsetCache = function(value)
-	DD(101, value % 2147483648)
-	DD(102, value / 2147483648)
+	DD(1, math.floor(value % 2147483648))
+	DD(1, math.floor(value / 2147483648))
+
+	-- DD(101, Base.NumberToInteger(value % 2147483648))
+	-- DD(102, Base.NumberToInteger(value / 2147483648))
 end
 
 -- 总的编码器脉冲数缓存
@@ -522,14 +526,10 @@ end
 
 --#region 主程序
 Servo.CheckParam()
+-- DD(100, 0)
+-- DD(101, 0)
+-- DD(102, 0)
 Servo.Enable()
-Delay(1000)
-Servo.SetEI(10, 0)
-Servo.SetEI(13, 0)
-Servo.SetEI(14, 0)
-Servo.SetSpeed(200)
-Servo.SetAccelerationTime(1000)
-Servo.SetDecelerationTime(1000)
 
 -- 位置预置
 Servo.TriggerEIRisingEdge(11)
@@ -541,16 +541,14 @@ local timer1_context = Timer.New(
 	10 * 1000,
 	true,
 	function()
+		Encoder.UpdataTotalPulseCacheInLoop()
 		Transmission.UpdataFractionGear()
-		Servo.SetRelativePosition(10 * 1000)
-		Servo.TriggerEIRisingEdge(10)
 	end
 )
 Timer.Start(timer1_context, true)
 
 while (true)
 do
-	Encoder.UpdataTotalPulseCacheInLoop()
 	Timer.Check(timer1_context)
 end
 --#endregion 主程序

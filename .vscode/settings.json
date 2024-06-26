@@ -13,6 +13,7 @@
 		"AXIS_DECEL",
 		"SRV_MON",
 		"AXIS_MOVE",
-		"DD"
+		"DD",
+		"DF"
 	]
 }
