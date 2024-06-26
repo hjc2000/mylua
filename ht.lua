@@ -288,7 +288,7 @@ Encoder = {}
 
 -- 编码器转一圈发出的脉冲数
 Encoder.PulsePerRotation = function()
-	return Base.IntegerPow(2, 17)
+	return Base.Pow(2, 17)
 end
 
 -- 编码器的累计脉冲数
@@ -308,13 +308,13 @@ end
 
 -- 获取储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.CumulativePulseOffsetCache = function()
-	return DD(101) + DD(102) * 2147483648
+	return (DD(102) << 32) | DD(101)
 end
 
 -- 设置储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.SetCumulativePulseOffsetCache = function(value)
-	DD(101, value % 2147483648)
-	DD(102, value / 2147483648)
+	DD(101, value & 0xffffffff)
+	DD(102, value >> 32)
 end
 
 -- 总的编码器脉冲数缓存
@@ -396,7 +396,7 @@ Base = {}
 -- 求 base 的 pow 次幂
 -- 只支持整数幂，pow 的小数部分会被丢弃
 -- base 会被以浮点数处理
-Base.IntegerPow = function(base, pow)
+Base.Pow = function(base, pow)
 	local ret = 1
 	for i = 0, pow - 1 do
 		ret = ret * base
@@ -516,7 +516,7 @@ end
 -- 将浮点的电子齿轮比转为分数
 Transmission.FractionGear = function()
 	local gear = Transmission.Gear()
-	local gain = (Base.IntegerPow(2, 22) - 1) / gear
+	local gain = (Base.Pow(2, 22) - 1) / gear
 	local fraction = {}
 	fraction[0] = gear * gain;
 	fraction[1] = gain;
