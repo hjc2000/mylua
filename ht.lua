@@ -375,12 +375,11 @@ end
 
 -- 重置编码器的累计脉冲数，连同累计脉冲缓存和累计脉冲偏移量缓存一起清 0.
 Encoder.ResetPosition = function()
+	-- 位置预置
+	Servo.TriggerEIRisingEdge(10)
 	DD(100, 0)
 	DD(101, 0)
 	DD(102, 0)
-
-	-- 位置预置
-	Servo.TriggerEIRisingEdge(10)
 end
 --#endregion
 
