@@ -430,7 +430,7 @@ end
 
 -- 从满卷到空卷的圈数
 Reel.N = function()
-	if (DD(107) == 0) then
+	if (DD(107) <= 0) then
 		DD(107, 100)
 	end
 
@@ -470,11 +470,11 @@ Transmission = {}
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 Transmission.ReductionRatio = function()
-	if (DD(103) == 0) then
+	if (DD(103) <= 0) then
 		DD(103, 1)
 	end
 
-	if (DD(104) == 0) then
+	if (DD(104) <= 0) then
 		DD(104, 1)
 	end
 
@@ -483,7 +483,7 @@ end
 
 -- 获取收线机收每米线输入多少个脉冲
 Transmission.InputPulsePerMetre = function()
-	if (DD(108) == 0) then
+	if (DD(108) <= 0) then
 		DD(108, 100)
 	end
 
@@ -554,7 +554,7 @@ Timer.Start(timer1_context, true)
 
 while (true)
 do
-	if (M(1)) then
+	if (M(1) == 1) then
 		-- 检测到触摸屏将 M1 置 1，重置编码器位置，并将 M1 置 0.
 		Encoder.ResetPosition()
 		M(1, 0)
