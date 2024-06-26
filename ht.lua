@@ -303,7 +303,7 @@ end
 
 -- 设置储存在非易失储存器的的编码器累计脉冲数
 Encoder.SetCumulativePulseCache = function(value)
-	DD(100, math.floor(value))
+	DD(100, value)
 end
 
 -- 获取储存在非易矢储存器的编码器累计脉冲偏移量缓存
@@ -313,8 +313,8 @@ end
 
 -- 设置储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.SetCumulativePulseOffsetCache = function(value)
-	DD(101, math.floor(value % 2147483648))
-	DD(102, math.floor(value / 2147483648))
+	DD(101, value % 2147483648)
+	DD(102, value / 2147483648)
 end
 
 -- 总的编码器脉冲数缓存
@@ -377,9 +377,16 @@ end
 Encoder.ResetPosition = function()
 	-- 位置预置
 	Servo.TriggerEIRisingEdge(10)
-	DD(100, math.floor(0))
-	DD(101, math.floor(0))
-	DD(102, math.floor(0))
+	DD(100, 0)
+	DD(101, 0)
+	DD(102, 0)
+	DD(103, 0)
+	DD(104, 0)
+	DD(105, 0)
+	DD(106, 0)
+	DD(107, 0)
+	DD(108, 0)
+	DD(109, 0)
 end
 --#endregion
 
@@ -391,14 +398,12 @@ Base = {}
 -- base 会被以浮点数处理
 Base.IntegerPow = function(base, pow)
 	local ret = 1
-	pow = math.floor(pow)
 	for i = 0, pow - 1 do
 		ret = ret * base
 	end
 
 	return ret
 end
-
 --#endregion
 
 --#region Reel
@@ -407,16 +412,28 @@ Reel = {}
 
 -- 空卷周长。单位：米
 Reel.C0 = function()
+	if (DF(105) <= 0) then
+		DF(105, 1)
+	end
+
 	return DF(105)
 end
 
 -- 满卷周长。单位：米
 Reel.C1 = function()
+	if (DF(106) <= Reel.C0()) then
+		DF(106, 1 + Reel.C0())
+	end
+
 	return DF(106)
 end
 
 -- 从满卷到空卷的圈数
 Reel.N = function()
+	if (DD(107) == 0) then
+		DD(107, 100)
+	end
+
 	return DD(107)
 end
 
@@ -453,11 +470,23 @@ Transmission = {}
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 Transmission.ReductionRatio = function()
+	if (DD(103) == 0) then
+		DD(103, 1)
+	end
+
+	if (DD(104) == 0) then
+		DD(104, 1)
+	end
+
 	return DD(103) / DD(104)
 end
 
 -- 获取收线机收每米线输入多少个脉冲
 Transmission.InputPulsePerMetre = function()
+	if (DD(108) == 0) then
+		DD(108, 100)
+	end
+
 	return DD(108)
 end
 
@@ -487,10 +516,10 @@ end
 -- 将浮点的电子齿轮比转为分数
 Transmission.FractionGear = function()
 	local gear = Transmission.Gear()
-	local gain = math.floor(Base.IntegerPow(2, 22) / gear)
+	local gain = (Base.IntegerPow(2, 22) - 1) / gear
 	local fraction = {}
-	fraction[0] = math.floor(gear * gain);
-	fraction[1] = math.floor(gain);
+	fraction[0] = gear * gain;
+	fraction[1] = gain;
 	return fraction
 end
 
@@ -518,7 +547,7 @@ local timer1_context = Timer.New(
 		Transmission.UpdataFractionGear()
 
 		-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
-		DD(1, math.floor(Reel.n()))
+		DD(1, Reel.n())
 	end
 )
 Timer.Start(timer1_context, true)
