@@ -506,17 +506,14 @@ end
 --#region 主程序
 Servo.CheckParam()
 Servo.Enable()
-
--- 位置预置
-Servo.TriggerEIRisingEdge(11)
-
 Encoder.UpdataTotalPulseCacheInInit()
 
--- 设置定时任务并立刻执行一次
+-- 设置定时任务
 local timer1_context = Timer.New(
 	10 * 1000,
 	true,
 	function()
+		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
 		Encoder.UpdataTotalPulseCacheInLoop()
 		Transmission.UpdataFractionGear()
 	end
