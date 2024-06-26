@@ -303,12 +303,11 @@ end
 
 -- 设置储存在非易失储存器的的编码器累计脉冲数
 Encoder.SetCumulativePulseCache = function(value)
-	DD(100, Base.NumberToInteger(value))
+	DD(100, math.floor(value))
 end
 
 -- 获取储存在非易矢储存器的编码器累计脉冲偏移量缓存
 Encoder.CumulativePulseOffsetCache = function()
-	-- return DD(101) + DD(102) * 2147483648
 	return DD(101) + DD(102) * 2147483648
 end
 
@@ -316,9 +315,6 @@ end
 Encoder.SetCumulativePulseOffsetCache = function(value)
 	DD(1, math.floor(value % 2147483648))
 	DD(1, math.floor(value / 2147483648))
-
-	-- DD(101, Base.NumberToInteger(value % 2147483648))
-	-- DD(102, Base.NumberToInteger(value / 2147483648))
 end
 
 -- 总的编码器脉冲数缓存
@@ -382,42 +378,17 @@ end
 --#region Base
 Base = {}
 
-Base.PI = 3.1415926535898
-
-Base.Max = function(num1, num2)
-	if (num1 > num2) then
-		return num1
-	end
-
-	return num2
-end
-
-Base.Min = function(num1, num2)
-	if (num1 < num2) then
-		return num1
-	end
-
-	return num2
-end
-
 -- 求 base 的 pow 次幂
 -- 只支持整数幂，pow 的小数部分会被丢弃
 -- base 会被以浮点数处理
 Base.IntegerPow = function(base, pow)
 	local ret = 1
-	pow = Base.NumberToInteger(pow)
+	pow = math.floor(pow)
 	for i = 0, pow - 1 do
 		ret = ret * base
 	end
 
 	return ret
-end
-
--- lua 的一切数字都为浮点。这里是将数字减去它的小数部分，只保留整数部分。
-Base.NumberToInteger = function(num)
-	local decimal_part = num % 1
-	local integer_part = num - decimal_part
-	return integer_part
 end
 
 --#endregion
@@ -443,12 +414,12 @@ end
 
 -- 空卷半径
 Reel.R0 = function()
-	return Reel.C0() / (2 * Base.PI)
+	return Reel.C0() / (2 * math.pi)
 end
 
 -- 满卷半径
 Reel.R1 = function()
-	return Reel.C1() / (2 * Base.PI)
+	return Reel.C1() / (2 * math.pi)
 end
 
 -- 获取线轴当前已经放出的圈数
@@ -463,7 +434,7 @@ end
 -- 在当前位置的基础上，线轴再转一圈放出的弧长
 Reel.DeltaS = function()
 	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
-	return 2 * Base.PI * (Reel.R1() - Reel.n() * (Reel.R1() - Reel.R0()) / Reel.N())
+	return 2 * math.pi * (Reel.R1() - Reel.n() * (Reel.R1() - Reel.R0()) / Reel.N())
 end
 
 --#endregion
@@ -508,10 +479,10 @@ end
 -- 将浮点的电子齿轮比转为分数
 Transmission.FractionGear = function()
 	local gear = Transmission.Gear()
-	local gain = Base.NumberToInteger(Base.IntegerPow(2, 22) / gear)
+	local gain = math.floor(Base.IntegerPow(2, 22) / gear)
 	local fraction = {}
-	fraction[0] = Base.NumberToInteger(gear * gain);
-	fraction[1] = Base.NumberToInteger(gain);
+	fraction[0] = math.floor(gear * gain);
+	fraction[1] = math.floor(gain);
 	return fraction
 end
 
