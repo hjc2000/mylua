@@ -380,13 +380,6 @@ Encoder.ResetPosition = function()
 	DD(100, 0)
 	DD(101, 0)
 	DD(102, 0)
-	DD(103, 0)
-	DD(104, 0)
-	DD(105, 0)
-	DD(106, 0)
-	DD(107, 0)
-	DD(108, 0)
-	DD(109, 0)
 end
 --#endregion
 
