@@ -291,43 +291,42 @@ Encoder.PulsePerRotation = function()
 	return Base.Pow(2, 17)
 end
 
--- 编码器的累计脉冲数
-Encoder.CumulativePulse = function()
+-- 编码器的位置
+Encoder.Position = function()
 	return SRV_MON(6)
 end
 
--- 获取储存在非易失储存器的的编码器累计脉冲数
-Encoder.CumulativePulseCache = function()
+-- 获取储存在非易失储存器的的编码器位置缓存
+Encoder.PositionCache = function()
 	return DD(100)
 end
 
--- 设置储存在非易失储存器的的编码器累计脉冲数
-Encoder.SetCumulativePulseCache = function(value)
+-- 设置储存在非易失储存器的的编码器位置缓存
+Encoder.SetPositionCache = function(value)
 	DD(100, value)
 end
 
--- 获取储存在非易矢储存器的编码器累计脉冲偏移量缓存
-Encoder.CumulativePulseOffsetCache = function()
+-- 获取储存在非易矢储存器的编码器位置偏移量缓存
+Encoder.PositionOffsetCache = function()
 	return (DD(102) << 32) | DD(101)
 end
 
--- 设置储存在非易矢储存器的编码器累计脉冲偏移量缓存
-Encoder.SetCumulativePulseOffsetCache = function(value)
+-- 设置储存在非易矢储存器的编码器位置偏移量缓存
+Encoder.SetPositionOffsetCache = function(value)
 	DD(101, value & 0xffffffff)
 	DD(102, value >> 32)
 end
 
--- 总的编码器脉冲数缓存
--- 总的缓存 = 累计缓存 + 偏移量缓存
-Encoder.TotalPulseCache = function()
-	return Encoder.CumulativePulseCache() + Encoder.CumulativePulseOffsetCache()
+-- 编码器绝对位置缓存。
+Encoder.AbsolutePositionCache = function()
+	return Encoder.PositionCache() + Encoder.PositionOffsetCache()
 end
 
--- 初始化时更新总的编码器脉冲数缓存
-Encoder.UpdataTotalPulseCacheInInit = function()
-	local pulse_offset_cache = Encoder.CumulativePulseOffsetCache()
-	local cumulative_pulse_cache = Encoder.CumulativePulseCache()
-	local cumulative_pulse = Encoder.CumulativePulse()
+-- 初始化时更新编码器绝对位置缓存。
+Encoder.UpdateAbsolutePositionCacheInInit = function()
+	local pulse_offset_cache = Encoder.PositionOffsetCache()
+	local cumulative_pulse_cache = Encoder.PositionCache()
+	local cumulative_pulse = Encoder.Position()
 
 	-- 上电后，理论的 cumulative_pulse 应该是 0，但是实际上可能因为振动或其他原因，
 	-- cumulative_pulse 并不是 0.
@@ -338,12 +337,12 @@ Encoder.UpdataTotalPulseCacheInInit = function()
 
 	-- 将增量储存到 pulse_offset_cache 中，然后 cumulative_pulse_cache 赋值为 cumulative_pulse
 	local delta_cumulative_pulse = cumulative_pulse_cache - cumulative_pulse
-	Encoder.SetCumulativePulseOffsetCache(pulse_offset_cache + delta_cumulative_pulse)
-	Encoder.SetCumulativePulseCache(cumulative_pulse)
+	Encoder.SetPositionOffsetCache(pulse_offset_cache + delta_cumulative_pulse)
+	Encoder.SetPositionCache(cumulative_pulse)
 end
 
--- 在死循环中更新总的编码器脉冲数缓存
-Encoder.UpdataTotalPulseCacheInLoop = function()
+-- 在死循环中更新编码器绝对位置缓存。
+Encoder.UpdataAbsolutePositionCacheInLoop = function()
 	-- 在这里要通过 cumulative_pulse_cache 检测出 cumulative_pulse 的溢出。
 	-- 如果发生溢出，要让 pulse_offset_cache 减去溢出后环绕的值
 	-- 例如 8 位有符号整型，127+1 后发生方向为负的环绕，环绕量为 -256，-128-1
@@ -351,29 +350,29 @@ Encoder.UpdataTotalPulseCacheInLoop = function()
 
 	-- 将值转移给 pulse_offset_cache 后，cumulative_pulse_cache 就可以继续跟踪 cumulative_pulse
 
-	local pulse_offset_cache = Encoder.CumulativePulseOffsetCache()
-	local cumulative_pulse_cache = Encoder.CumulativePulseCache()
-	local cumulative_pulse = Encoder.CumulativePulse()
+	local pulse_offset_cache = Encoder.PositionOffsetCache()
+	local cumulative_pulse_cache = Encoder.PositionCache()
+	local cumulative_pulse = Encoder.Position()
 	local delta_cumulative_pulse = cumulative_pulse - cumulative_pulse_cache
 
 	-- 正转，累计脉冲数上溢后变成负数了，负数减去还是正数的缓存后变成一个很负的数
 	if (delta_cumulative_pulse < -2147483648) then
-		Encoder.SetCumulativePulseOffsetCache(pulse_offset_cache + 2147483648 * 2)
+		Encoder.SetPositionOffsetCache(pulse_offset_cache + 2147483648 * 2)
 		-- 更新累计脉冲缓存
-		Encoder.SetCumulativePulseCache(cumulative_pulse)
+		Encoder.SetPositionCache(cumulative_pulse)
 		return
 	end
 
 	-- 反转，发生下溢，溢出到正数那边了，正数减去还是负数的缓存，得到一个特别大的正数
 	if (delta_cumulative_pulse > 2147483647) then
-		Encoder.SetCumulativePulseOffsetCache(pulse_offset_cache - 2147483648 * 2)
+		Encoder.SetPositionOffsetCache(pulse_offset_cache - 2147483648 * 2)
 		-- 更新累计脉冲缓存
-		Encoder.SetCumulativePulseCache(cumulative_pulse)
+		Encoder.SetPositionCache(cumulative_pulse)
 		return
 	end
 
 	-- 更新累计脉冲缓存
-	Encoder.SetCumulativePulseCache(cumulative_pulse)
+	Encoder.SetPositionCache(cumulative_pulse)
 end
 
 -- 重置编码器的累计脉冲数，连同累计脉冲缓存和累计脉冲偏移量缓存一起清 0.
@@ -447,7 +446,7 @@ end
 
 -- 获取线轴当前已经放出的圈数
 Reel.n = function()
-	local encoder_rotations = Encoder.TotalPulseCache() / Encoder.PulsePerRotation()
+	local encoder_rotations = Encoder.AbsolutePositionCache() / Encoder.PulsePerRotation()
 
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 线轴转的圈数 = 电机转的圈数 / 减速比
@@ -533,7 +532,7 @@ end
 --#region 主程序
 Servo.CheckParam()
 Servo.Enable()
-Encoder.UpdataTotalPulseCacheInInit()
+Encoder.UpdateAbsolutePositionCacheInInit()
 
 -- 设置定时任务
 local timer1_context = Timer.New(
@@ -541,7 +540,7 @@ local timer1_context = Timer.New(
 	true,
 	function()
 		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
-		Encoder.UpdataTotalPulseCacheInLoop()
+		Encoder.UpdataAbsolutePositionCacheInLoop()
 		Transmission.UpdataFractionGear()
 
 		-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
