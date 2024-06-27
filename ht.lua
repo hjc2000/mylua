@@ -293,7 +293,7 @@ end
 
 -- 编码器的累计脉冲数
 Encoder.CumulativePulse = function()
-	return SRV_MON(10)
+	return SRV_MON(6)
 end
 
 -- 获取储存在非易失储存器的的编码器累计脉冲数
@@ -371,6 +371,9 @@ Encoder.UpdataTotalPulseCacheInLoop = function()
 		Encoder.SetCumulativePulseCache(cumulative_pulse)
 		return
 	end
+
+	-- 更新累计脉冲缓存
+	Encoder.SetCumulativePulseCache(cumulative_pulse)
 end
 
 -- 重置编码器的累计脉冲数，连同累计脉冲缓存和累计脉冲偏移量缓存一起清 0.
