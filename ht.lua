@@ -322,6 +322,11 @@ Encoder.AbsolutePositionCache = function()
 	return Encoder.PositionCache() + Encoder.PositionOffsetCache()
 end
 
+-- 实时的编码器绝对位置
+Encoder.RealTimeAbsolutePosition = function()
+	return Encoder.Position() + Encoder.PositionOffsetCache()
+end
+
 -- 初始化时更新编码器绝对位置缓存。
 Encoder.UpdateAbsolutePositionCacheInInit = function()
 	local pulse_offset_cache = Encoder.PositionOffsetCache()
@@ -453,6 +458,14 @@ Reel.n = function()
 	return encoder_rotations / Transmission.ReductionRatio()
 end
 
+Reel.RealTime_n = function()
+	local encoder_rotations = Encoder.RealTimeAbsolutePosition() / Encoder.PulsePerRotation()
+
+	-- 减速比 = 电机转的圈数 / 线轴转的圈数
+	-- 线轴转的圈数 = 电机转的圈数 / 减速比
+	return encoder_rotations / Transmission.ReductionRatio()
+end
+
 -- 在当前位置的基础上，线轴再转一圈放出的弧长
 Reel.DeltaS = function()
 	-- Δs = 2 * pi * (r1 - n * (r1 - r0) / N)
@@ -542,9 +555,6 @@ local timer1_context = Timer.New(
 		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
 		Encoder.UpdataAbsolutePositionCacheInLoop()
 		Transmission.UpdataFractionGear()
-
-		-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
-		DD(1, Reel.n())
 	end
 )
 Timer.Start(timer1_context, true)
@@ -558,5 +568,8 @@ do
 	end
 
 	Timer.Check(timer1_context)
+
+	-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
+	DD(1, Reel.RealTime_n())
 end
 --#endregion 主程序
