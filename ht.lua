@@ -424,7 +424,7 @@ end
 -- 满卷周长。单位：米
 Reel.C1 = function()
 	if (DF(106) <= Reel.C0()) then
-		DF(106, 1 + Reel.C0())
+		DF(106, Reel.C0())
 	end
 
 	return DF(106)
