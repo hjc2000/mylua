@@ -1,3 +1,14 @@
+-- 检查浮点数是否超过了 int 的表示范围
+function FloatOutsideIntRange(value)
+	if (value > 2147483647) then
+		return true
+	end
+
+	if (value < -2147483648) then
+		return true
+	end
+end
+
 -- 将浮点转为 32 位整型。会进行截断，使得结果更靠近 0
 -- value 大于 2147483647 会返回 2147483647
 -- value 小于 -2147483648 会返回 -2147483648
@@ -23,10 +34,12 @@ function IntDiv(left, right)
 	left = FloatToInt(left)
 	right = FloatToInt(right)
 
+	-- 同号
 	if (left > 0 and right > 0) then
 		return left // right
 	end
 
+	-- 同号
 	if (left < 0 and right < 0) then
 		return left // right
 	end
