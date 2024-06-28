@@ -16,53 +16,43 @@ Servo.SetParam = function(group, index, value)
 	SRV_PARA(group, index, value)
 end
 
--- 检查参数。参数不对会设置参数后重启伺服。
+-- 检查参数。参数不对会设置参数
 Servo.CheckParam = function()
-	local should_restart = false
-
 	-- 定位运行模式
 	if (Servo.GetParam(1, 1) ~= 7) then
 		Servo.SetParam(1, 1, 7)
-		should_restart = true
 	end
 
 	-- 速度控制时加减速有效
 	if (Servo.GetParam(1, 36) ~= 1) then
 		Servo.SetParam(1, 36, 1)
-		should_restart = true
 	end
 
 	-- 内部定位数据无效
 	if (Servo.GetParam(2, 40) ~= 0) then
 		Servo.SetParam(2, 40, 0)
-		should_restart = true
 	end
 
 	--#region 硬件 EI 分配
 	-- EI1
 	if (Servo.GetParam(3, 1) ~= 0) then
 		Servo.SetParam(3, 1, 0)
-		should_restart = true
 	end
 	-- EI2
 	if (Servo.GetParam(3, 2) ~= 0) then
 		Servo.SetParam(3, 2, 0)
-		should_restart = true
 	end
 	-- EI3
 	if (Servo.GetParam(3, 3) ~= 0) then
 		Servo.SetParam(3, 3, 0)
-		should_restart = true
 	end
 	-- EI4
 	if (Servo.GetParam(3, 4) ~= 0) then
 		Servo.SetParam(3, 4, 0)
-		should_restart = true
 	end
 	-- EI5
 	if (Servo.GetParam(3, 5) ~= 0) then
 		Servo.SetParam(3, 5, 0)
-		should_restart = true
 	end
 	--#endregion
 
@@ -70,89 +60,68 @@ Servo.CheckParam = function()
 	-- EI9 配置为使能
 	if (Servo.GetParam(3, 9) ~= 1) then
 		Servo.SetParam(3, 9, 1)
-		should_restart = true
 	end
 	-- EI10 配置为位置预置功能
 	if (Servo.GetParam(3, 10) ~= 16) then
 		Servo.SetParam(3, 10, 16)
-		should_restart = true
 	end
 	-- EI11 配置为控制模式切换。为 ON 时进入速度控制模式，此时可以点动。
 	if (Servo.GetParam(3, 11) ~= 36) then
 		Servo.SetParam(3, 11, 36)
-		should_restart = true
 	end
 	-- EI12 配置为正转
 	if (Servo.GetParam(3, 12) ~= 2) then
 		Servo.SetParam(3, 12, 2)
-		should_restart = true
 	end
 	-- EI13 配置为反转
 	if (Servo.GetParam(3, 13) ~= 3) then
 		Servo.SetParam(3, 13, 3)
-		should_restart = true
 	end
 	-- EI14
 	if (Servo.GetParam(3, 14) ~= 0) then
 		Servo.SetParam(3, 14, 0)
-		should_restart = true
 	end
 	-- EI15
 	if (Servo.GetParam(3, 15) ~= 0) then
 		Servo.SetParam(3, 15, 0)
-		should_restart = true
 	end
 	-- EI16
 	if (Servo.GetParam(3, 16) ~= 0) then
 		Servo.SetParam(3, 16, 0)
-		should_restart = true
 	end
 	-- EI17
 	if (Servo.GetParam(3, 17) ~= 0) then
 		Servo.SetParam(3, 17, 0)
-		should_restart = true
 	end
 	-- EI18
 	if (Servo.GetParam(3, 18) ~= 0) then
 		Servo.SetParam(3, 18, 0)
-		should_restart = true
 	end
 	-- EI19
 	if (Servo.GetParam(3, 19) ~= 0) then
 		Servo.SetParam(3, 19, 0)
-		should_restart = true
 	end
 	-- EI20
 	if (Servo.GetParam(3, 20) ~= 0) then
 		Servo.SetParam(3, 20, 0)
-		should_restart = true
 	end
 	-- EI21
 	if (Servo.GetParam(3, 21) ~= 0) then
 		Servo.SetParam(3, 21, 0)
-		should_restart = true
 	end
 	-- EI22
 	if (Servo.GetParam(3, 22) ~= 0) then
 		Servo.SetParam(3, 22, 0)
-		should_restart = true
 	end
 	-- EI23
 	if (Servo.GetParam(3, 23) ~= 0) then
 		Servo.SetParam(3, 23, 0)
-		should_restart = true
 	end
 	-- EI24
 	if (Servo.GetParam(3, 24) ~= 0) then
 		Servo.SetParam(3, 24, 0)
-		should_restart = true
 	end
 	--#endregion
-
-	-- 重启
-	if (should_restart) then
-		Servo.Restart()
-	end
 end
 
 -- 获取 EI
