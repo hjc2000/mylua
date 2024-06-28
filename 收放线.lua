@@ -1,4 +1,5 @@
 --#region Int
+
 -- 将浮点转为 32 位整型。会进行截断，使得结果更靠近 0
 -- value 大于 2147483647 会返回 2147483647
 -- value 小于 -2147483648 会返回 -2147483648
@@ -56,54 +57,6 @@ function IntDivMod(left, right)
 	ret.div = IntDiv(left, right)
 	ret.mod = IntMod(left, right)
 	return ret
-end
-
-function Int64_New()
-	local int64 = {}
-	int64[0] = 0
-	int64[1] = 0
-	return int64
-end
-
-function Int64_New(value)
-	-- 此表作为一个 2 个元素的数组。每个元素都是一个整型，底层是 int，由此实现 int64_t
-	-- 这里不实现补码的位结构，这用脚本难以实现。这里选择让 2 个 int 独立计数，第二个 int
-	-- 的权重为 2147483648。第一个 int 向第二个 int 进位和借位。
-	local int64 = {}
-
-	if (value > 2147483647) then
-		-- value 超过 int 表示范围了，已经变成浮点数了
-		int64[0] = math.floor(value % 2147483648)
-		int64[1] = math.floor(value / 2147483648)
-		return int64
-	end
-
-	-- 虽然 int 可以表示 -2147483648 ，但是为了进位和借位对等，这里只让 int 表示到
-	-- -2147483647
-	if (value < -2147483647) then
-		-- value 超过 int 表示范围了，已经变成浮点数了
-		-- lua 中，求模得到的余数的符号会与求模运算符的右操作数的符号相同。
-		-- 		-3 % 2 = -2 余 1
-		-- 结果得到 1.
-		-- 		-3 % -2 = 1 余 -1
-		int64[0] = math.ceil(value % -2147483648)
-		int64[1] = math.ceil(value / 2147483648)
-		return int64
-	end
-
-	-- value 足够小，可以被 int 表示
-	if (value > 0) then
-		value = math.floor(value)
-		int64[0] = value
-		int64[1] = 0
-		return int64
-	end
-
-	-- value 是一个可以用整型表示的负数
-	value = math.ceil(value)
-	int64[0] = value
-	int64[1] = 0xffffffff
-	return int64
 end
 
 --endregion
