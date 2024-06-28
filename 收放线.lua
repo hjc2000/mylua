@@ -11,7 +11,7 @@ local timer1_context = Timer_New(
 	true,
 	function()
 		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
-		Encoder_UpdataAbsolutePositionCacheInLoop()
+		Encoder_UpdateCumulativePulseCache()
 		Transmission_UpdataFractionGear()
 	end
 )
@@ -28,5 +28,5 @@ do
 	Timer_Check(timer1_context)
 
 	-- 将线轴已经转的圈数放到 D1 中供触摸屏读取
-	DD(1, Reel_ReleasedRotations())
+	DD(1, Reel_n())
 end
