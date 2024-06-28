@@ -1,3 +1,44 @@
+--#region Int64
+function Int64_New()
+	local int64 = {}
+	int64[0] = 0
+	int64[1] = 0
+	return int64
+end
+
+function Int64_New(value)
+	local int64 = {}
+
+	if (value > 2147483647) then
+		-- value 超过 int 表示范围了，已经变成浮点数了
+		int64[0] = math.floor(value % 2147483647)
+		int64[1] = math.floor(value / 2147483647)
+		return int64
+	end
+
+	if (value < -2147483648) then
+		-- value 超过 int 表示范围了，已经变成浮点数了
+		int64[0] = math.ceil(value % -2147483648)
+		int64[1] = math.ceil(value / 2147483648)
+		return int64
+	end
+
+	-- value 还可以被 int 表示
+	if (value > 0) then
+		value = math.floor(value)
+		int64[0] = value
+		int64[1] = 0
+		return int64
+	end
+
+	value = math.ceil(value)
+	int64[0] = value
+	int64[1] = 0xffffffff
+	return int64
+end
+
+--endregion
+
 -- 毫秒延时
 function Delay(milliseconds)
 	DELAY(milliseconds)
@@ -263,7 +304,8 @@ end
 
 -- 编码器的位置
 Encoder.Position = function()
-	return SRV_MON(6)
+	-- 读取编码器的累计脉冲数。这个数被伺服使用 int 计数，正向溢出后会从最大正数变成最小负数。
+	return SRV_MON(10)
 end
 
 -- 获取储存在非易失储存器的的编码器位置缓存
