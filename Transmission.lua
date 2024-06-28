@@ -1,3 +1,5 @@
+--#region 减速比
+
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 -- 这里获取的是分子：电机转的圈数
 function Transmission_ReductionRatio_Machine()
@@ -17,6 +19,10 @@ function Transmission_ReductionRatio_Reel()
 
 	return DD(104)
 end
+
+--#endregion
+
+--#region 线长和脉冲关系
 
 -- 收线机收 x 米线会输入 y 个脉冲
 -- 这里获取的是其中的 x
@@ -43,13 +49,15 @@ function Transmission_InputPulsePerDeltaS()
 	return FloatToInt(Reel_DeltaS() * Transmission_InputPulse_Y() / Transmission_InputPulse_X)
 end
 
+--#endregion
+
 -- 获取电子齿轮比。
 function Transmission_Gear()
-	-- 电子齿轮比 = 编码器脉冲个数 / 输入脉冲个数
-	local gear = Transmission_ReductionRatio_Machine() /
-		Transmission_ReductionRatio_Reel() *
-		Encoder_PulsePerRotation() /
-		Transmission_InputPulsePerDeltaS()
+	-- 电子齿轮比 = 编码器脉冲个数 / (输入脉冲个数 * 输入脉冲比率)
+	local gear = Transmission_ReductionRatio_Machine()
+		/ Transmission_ReductionRatio_Reel()
+		* Encoder_PulsePerRotation()
+		/ Transmission_InputPulsePerDeltaS()
 
 	return gear
 end
