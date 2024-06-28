@@ -14,7 +14,7 @@ function Reel_ReleasedRotations()
 		+ Reel_ReleasedRotationsOffset()
 end
 
--- 空卷周长。单位：米
+-- 空卷周长。单位：mm
 function Reel_C0()
 	if (DF(105) <= 0) then
 		DF(105, 1)
@@ -23,7 +23,7 @@ function Reel_C0()
 	return DF(105)
 end
 
--- 满卷周长。单位：米
+-- 满卷周长。单位：mm
 function Reel_C1()
 	if (DF(106) <= Reel_C0()) then
 		DF(106, Reel_C0())
@@ -51,7 +51,7 @@ function Reel_R1()
 	return Reel_C1() / (2 * math.pi)
 end
 
--- 在当前位置的基础上，线轴再转一圈放出的弧长
+-- 在当前位置的基础上，线轴再转一圈放出的弧长。单位：mm
 function Reel_DeltaS()
 	-- Δs = 2 * pi * r
 	-- r = R1 - D * n
