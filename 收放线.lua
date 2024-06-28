@@ -65,9 +65,10 @@ Servo.CheckParam = function()
 	if (Servo.GetParam(3, 10) ~= 16) then
 		Servo.SetParam(3, 10, 16)
 	end
-	-- EI11 配置为控制模式切换。为 ON 时进入速度控制模式，此时可以点动。
-	if (Servo.GetParam(3, 11) ~= 36) then
-		Servo.SetParam(3, 11, 36)
+	-- EI11 配置为指令脉冲比率 1，为 ON 时进入脉冲模式
+	-- 为 OFF 时可以被正转信号和反转信号控制进行点动。
+	if (Servo.GetParam(3, 11) ~= 27) then
+		Servo.SetParam(3, 11, 27)
 	end
 	-- EI12 配置为正转
 	if (Servo.GetParam(3, 12) ~= 2) then
@@ -515,6 +516,9 @@ end
 Servo.CheckParam()
 Servo.Enable()
 Encoder.UpdateAbsolutePositionCacheInInit()
+
+-- 初始化后默认进入脉冲模式
+Servo.SetEI(11, 1)
 
 -- 设置定时任务
 local timer1_context = Timer.New(
