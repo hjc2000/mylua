@@ -8,9 +8,10 @@ function Reel_SetReleasedRotationsOffset(value)
 	DD(101, value)
 end
 
--- 线轴已放出的圈数：偏移量 + 通过累计脉冲数算出来的圈数
+-- 线轴已放出的圈数 = 偏移量 + 通过累计脉冲数缓存算出来的圈数
 function Reel_ReleasedRotations()
-	return Encoder_CumulativeRotationsCache() + Reel_ReleasedRotationsOffset()
+	return IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
+		+ Reel_ReleasedRotationsOffset()
 end
 
 -- 空卷周长。单位：米

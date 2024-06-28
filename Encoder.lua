@@ -17,8 +17,3 @@ end
 function Encoder_SetCumulativePulseCache(value)
 	DD(100, value)
 end
-
--- 通过缓存计算得到的编码器累计圈数
-function Encoder_CumulativeRotationsCache()
-	return IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
-end
