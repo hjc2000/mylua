@@ -21,7 +21,7 @@ end
 -- 计算电子齿轮比，并更新伺服参数
 function Transmission_UpdataFractionGear()
 	local gear_num = Encoder_PulsePerRotation() /
-		(Reel_N() * Reel_C1() + Reel_C0() * Reel_n() - Reel_C1() * Reel_n) *
+		(Reel_N() * Reel_C1() + Reel_C0() * Reel_n() - Reel_C1() * Reel_n()) *
 		Reel_N() *
 		Transmission_ReductionRatio_Machine() *
 		Input_X();
