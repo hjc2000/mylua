@@ -25,6 +25,8 @@ function Encoder_UpdateCumulativePulseCacheInInit()
 
 	local delta_pulse = Encoder_CumulativePulseCache() - pulse
 	local delta_encoder_n = IntDiv(delta_pulse, Encoder_PulsePerRotation())
+	local encoder_n_offset = Encoder_n_Offset()
+
 
 	-- 减速比 = 电机转的圈数 / 线轴转的圈数
 	-- 线轴转的圈数 = 电机转的圈数 / 减速比
@@ -46,27 +48,31 @@ function Encoder_UpdateCumulativePulseCache()
 
 	if (pulse < (-2147483648 // 2) and Encoder_CumulativePulseCache() > (2147483647 // 2)) then
 		-- 发生正向溢出
-		local reel_n_offset = Reel_ReleasedRotationsOffset()
-		local delta_encoder_n = IntPow(2, 32 - 17)
-
-		-- 减速比 = 电机转的圈数 / 线轴转的圈数
-		-- 线轴转的圈数 = 电机转的圈数 / 减速比
-		local delta_reel_n = delta_encoder_n / Transmission_ReductionRatio_Machine() * Transmission_ReductionRatio_Reel()
-		delta_reel_n = FloatToInt(delta_reel_n)
-		Reel_SetReleasedRotationsOffset(reel_n_offset + delta_reel_n)
+		local encoder_n_offset = Encoder_n_Offset()
+		Encoder_Set_n_Offset(encoder_n_offset + IntPow(2, 32 - 17))
 	end
 
 	if (Encoder_CumulativePulseCache() < (-2147483648 // 2) and pulse > (2147483647 // 2)) then
 		-- 发生负向溢出
-		local reel_n_offset = Reel_ReleasedRotationsOffset()
-		local delta_encoder_n = IntPow(2, 32 - 17)
-
-		-- 减速比 = 电机转的圈数 / 线轴转的圈数
-		-- 线轴转的圈数 = 电机转的圈数 / 减速比
-		local delta_reel_n = delta_encoder_n / Transmission_ReductionRatio_Machine() * Transmission_ReductionRatio_Reel()
-		delta_reel_n = FloatToInt(delta_reel_n)
-		Reel_SetReleasedRotationsOffset(reel_n_offset - delta_reel_n)
+		local encoder_n_offset = Encoder_n_Offset()
+		Encoder_Set_n_Offset(encoder_n_offset - IntPow(2, 32 - 17))
 	end
 
 	Encoder_SetCumulativePulseCache(pulse)
+end
+
+-- 编码器转的圈数的偏移量
+function Encoder_n_Offset()
+	return DD(101)
+end
+
+-- 设置编码器转的圈数的偏移量
+function Encoder_Set_n_Offset(value)
+	DD(101, value)
+end
+
+-- 编码器转过的圈数 = 累计脉冲数计算出来的圈数 + Encoder_n_Offset()
+function Encoder_n()
+	return IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation()) +
+		Encoder_n_Offset()
 end

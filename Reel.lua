@@ -1,13 +1,3 @@
--- 获取线轴已放出的圈数的偏移量
-function Reel_ReleasedRotationsOffset()
-	return DD(101)
-end
-
--- 设置线轴已放出的圈数的偏移量
-function Reel_SetReleasedRotationsOffset(value)
-	DD(101, value)
-end
-
 -- 线轴已放出的圈数 = 偏移量 + 通过累计脉冲数缓存算出来的圈数
 function Reel_n()
 	return IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
