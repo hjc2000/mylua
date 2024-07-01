@@ -1,6 +1,6 @@
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 -- 这里获取的是分子：电机转的圈数
-function Transmission_ReductionRatio_Machine()
+function Transmission_ReductionRatioNum()
 	if (DD(103) <= 0) then
 		DD(103, 1)
 	end
@@ -10,7 +10,7 @@ end
 
 -- 获取减速比。减速比 = 电机转的圈数 / 线轴转的圈数
 -- 这里获取的是分母：线轴转的圈数
-function Transmission_ReductionRatio_Reel()
+function Transmission_ReductionRatioDen()
 	if (DD(104) <= 0) then
 		DD(104, 1)
 	end
@@ -23,10 +23,10 @@ function Transmission_UpdataFractionGear()
 	local gear_num = Encoder_PulsePerRotation() /
 		(Reel_N() * Reel_C1() + Reel_C0() * Reel_n() - Reel_C1() * Reel_n()) *
 		Reel_N() *
-		Transmission_ReductionRatio_Machine() *
+		Transmission_ReductionRatioNum() *
 		Input_X();
 
-	local gear_den = Input_PulseRatio() * Input_Y() * Transmission_ReductionRatio_Reel();
+	local gear_den = Input_PulseRatio() * Input_Y() * Transmission_ReductionRatioDen();
 
 	-- 浮点的电子齿轮比
 	local gear = gear_num / gear_den;

@@ -1,16 +1,9 @@
--- 线轴已放出的圈数 = 偏移量 + 通过累计脉冲数缓存算出来的圈数
+-- 线轴转的圈数
 function Reel_n()
-	return IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
-		+ Reel_ReleasedRotationsOffset()
-end
-
--- 重置已放出的圈数
-function Reel_ResetReleasedRotations()
-	Encoder_SetCumulativePulseCache(Encoder_CumulativePulse())
-
-	-- 设置为 -IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
-	-- 才能使 Reel_n 为 0
-	Reel_SetReleasedRotationsOffset(-IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation()))
+	-- 减速比 = 编码器转的圈数 / 线轴转的圈数
+	-- 线轴转的圈数 = 编码器转的圈数 / 减速比
+	local n = Encoder_n() / Transmission_ReductionRatioNum() * Transmission_ReductionRatioDen()
+	return FloatToInt(n)
 end
 
 -- 空卷周长。单位：mm

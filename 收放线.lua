@@ -21,7 +21,7 @@ while (true)
 do
 	if (M(1) == 1) then
 		-- 检测到触摸屏将 M1 置 1，重置已放出的圈数，并将 M1 置 0.
-		Reel_ResetReleasedRotations()
+		Encoder_Reset()
 		M(1, 0)
 	end
 
