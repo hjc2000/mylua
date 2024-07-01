@@ -3,6 +3,7 @@ Servo_Enable()
 
 -- 初始化后默认进入脉冲模式
 Servo_SetEI(11, 1)
+Encoder_UpdateCumulativePulseCacheInInit()
 
 -- 设置定时任务
 local timer1_context = Timer_New(
@@ -19,8 +20,8 @@ Timer_Start(timer1_context, true)
 while (true)
 do
 	if (M(1) == 1) then
-		-- 检测到触摸屏将 M1 置 1，重置编码器位置，并将 M1 置 0.
-		Encoder_ResetPosition()
+		-- 检测到触摸屏将 M1 置 1，重置已放出的圈数，并将 M1 置 0.
+		Reel_ResetReleasedRotations()
 		M(1, 0)
 	end
 

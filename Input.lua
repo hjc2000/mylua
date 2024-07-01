@@ -1,15 +1,16 @@
 function Input_PulseRatio()
-	return 1
+	-- 指令脉冲比率 1
+	return Servo_GetParam(2, 54)
 end
 
 -- 收线机收 x 米线会发出 y 个脉冲
 -- 这里获取的是其中的 x
 function Input_X()
-	if (DF(108) <= 0) then
-		DF(108, 100)
+	if (DD(108) <= 0) then
+		DD(108, 100)
 	end
 
-	return DF(108)
+	return DD(108)
 end
 
 -- 收线机收 x 米线会发出 y 个脉冲

@@ -14,22 +14,29 @@ function Reel_n()
 		+ Reel_ReleasedRotationsOffset()
 end
 
+-- 重置已放出的圈数
+function Reel_ResetReleasedRotations()
+	-- 设置为 -IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation())
+	-- 才能使 Reel_n 为 0
+	Reel_SetReleasedRotationsOffset(-IntDiv(Encoder_CumulativePulseCache(), Encoder_PulsePerRotation()))
+end
+
 -- 空卷周长。单位：mm
 function Reel_C0()
-	if (DF(105) <= 0) then
-		DF(105, 1)
+	if (DD(105) <= 0) then
+		DD(105, 1)
 	end
 
-	return DF(105)
+	return DD(105)
 end
 
 -- 满卷周长。单位：mm
 function Reel_C1()
-	if (DF(106) <= Reel_C0()) then
-		DF(106, Reel_C0())
+	if (DD(106) <= Reel_C0()) then
+		DD(106, Reel_C0())
 	end
 
-	return DF(106)
+	return DD(106)
 end
 
 -- 从满卷到空卷的圈数
