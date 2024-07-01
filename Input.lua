@@ -1,5 +1,5 @@
+-- 指令脉冲比率 1
 function Input_PulseRatio()
-	-- 指令脉冲比率 1
 	return Servo_GetParam(2, 54)
 end
 
