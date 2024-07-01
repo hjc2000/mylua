@@ -18,29 +18,32 @@ function Transmission_ReductionRatio_Reel()
 	return DD(104)
 end
 
--- 收线机收 x 米线会发出 y 个脉冲
--- 这里获取的是其中的 x
-function Transmission_InputPulse_X()
-	if (DF(108) <= 0) then
-		DF(108, 100)
-	end
-
-	return DF(108)
-end
-
--- 收线机收 x 米线会发出 y 个脉冲
--- 这里获取的是其中的 y
-function Transmission_InputPulse_Y()
-	if (DD(109) <= 0) then
-		DD(109, 100)
-	end
-
-	return DD(109)
-end
-
 -- 计算电子齿轮比，并更新伺服参数
-Transmission_UpdataFractionGear = function()
-	local fraction_gear = Transmission_FractionGear()
-	Servo_SetParam(1, 6, fraction_gear[0])
-	Servo_SetParam(1, 7, fraction_gear[1])
+function Transmission_UpdataFractionGear()
+	local gear_num = Encoder_PulsePerRotation() /
+		(Reel_N() * Reel_C1() + Reel_C0() * Reel_n() - Reel_C1() * Reel_n) *
+		Reel_N() *
+		Transmission_ReductionRatio_Machine() *
+		Input_X();
+
+	local gear_den = Input_PulseRatio() * Input_Y() * Transmission_ReductionRatio_Reel();
+
+	-- 浮点的电子齿轮比
+	local gear = gear_num / gear_den;
+
+	-- 要将 gear 转化成分数
+	-- 分子分母最大值是 IntPow(2, 22) - 1
+	-- 计算看 gear 能乘多少比例而不超过最大值
+	local rate = (IntPow(2, 22) - 1) / gear
+
+	-- 对浮点型的比例进行截断，转化为整型
+	rate = FloatToInt(rate)
+
+	-- gear = gear / 1
+	-- 分子分母同时乘 rate
+	gear_num = FloatToInt(gear * rate)
+	gear_den = rate
+
+	Servo_SetParam(1, 6, gear_num)
+	Servo_SetParam(1, 7, gear_den)
 end

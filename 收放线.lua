@@ -1,6 +1,5 @@
 Servo_CheckParam()
 Servo_Enable()
-Encoder_UpdateAbsolutePositionCacheInInit()
 
 -- 初始化后默认进入脉冲模式
 Servo_SetEI(11, 1)

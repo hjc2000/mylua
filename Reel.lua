@@ -40,13 +40,3 @@ function Reel_N()
 
 	return DD(107)
 end
-
--- 空卷半径
-function Reel_R0()
-	return Reel_C0() / (2 * math.pi)
-end
-
--- 满卷半径
-function Reel_R1()
-	return Reel_C1() / (2 * math.pi)
-end
