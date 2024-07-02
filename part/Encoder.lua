@@ -41,7 +41,7 @@ function Encoder_UpdateCumulativePulseCacheInInit()
 	Encoder_SetCumulativePulseCache(current_cumulative_pulse)
 end
 
--- 设置储存在非易失储存器的的编码器累计脉冲数缓存
+-- 更新储存在非易失储存器的的编码器累计脉冲数缓存
 -- 会同时检查是否溢出，溢出了会增加或减少当前已经转的圈数的偏移量
 function Encoder_UpdateCumulativePulseCache()
 	-- 读取编码器的累计脉冲数。这个数被伺服使用 int 计数，正向溢出后会从最大正数变成最小负数。
