@@ -3,7 +3,14 @@ function Reel_n()
 	-- 减速比 = 编码器转的圈数 / 线轴转的圈数
 	-- 线轴转的圈数 = 编码器转的圈数 / 减速比
 	local n = Encoder_n() / Transmission_ReductionRatioNum() * Transmission_ReductionRatioDen()
-	return FloatToInt(n)
+	n = FloatToInt(n)
+
+	-- n 不应超过 N
+	if (n > Reel_N()) then
+		return Reel_N()
+	end
+
+	return n
 end
 
 -- 空卷周长。单位：mm
