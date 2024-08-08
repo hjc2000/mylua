@@ -1,11 +1,20 @@
--- 毫秒延时
+--- 毫秒延时
+--- @param milliseconds integer
 function Delay(milliseconds)
 	DELAY(milliseconds)
 end
 
--- 构造一个新的定时器。会自动分配空闲的定时器。
--- 如果没有空闲的定时器，会返回 nil，否则返回定时器上下文
--- 需要用 Timer_Start 函数启动定时器。
+--- 构造一个新的定时器。会自动分配空闲的定时器。
+--- 如果没有空闲的定时器，会返回 nil，否则返回定时器上下文
+--- 需要用 Timer_Start 函数启动定时器。
+--- @param interval_in_milliseconds integer 定时周期。单位：ms
+---
+--- @param auto_reset boolean 每次定时时间到后，触发回调后是否自动重置定时时间到标识。
+--- 重置后要下一次定时时间到 Timer_Check 才会再次触发回调。
+--- 如果不自动重置，则必须手动重置，否则即使定时时间没到，Timer_Check 也会触发回调。
+---
+--- @param callback_func function 回调函数。
+--- @return table 定时器上下文。
 function Timer_New(interval_in_milliseconds, auto_reset, callback_func)
 	-- 数组，索引为 n 的位置为 true 表示定时器 ID 是 n 的定时器正在被使用
 	G_timer_usage_states = {}
