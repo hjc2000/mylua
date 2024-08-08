@@ -36,15 +36,17 @@ function Timer_New(interval_in_milliseconds, auto_reset, callback_func)
 	return nil
 end
 
--- 释放定时器。
--- 如果定时器还未停止，会先调用 Timer_Stop
+--- 释放定时器。
+--- 会先调用 Timer_Stop
+--- @param timer_context table 定时器上下文。
 function Timer_Free(timer_context)
 	Timer_Stop(timer_context)
 	G_timer_usage_states[timer_context.timer_id] = false
 end
 
--- 启动定时器。
--- callback_immediately 为 true 则会立刻执行一次回调，不用等到定时时间到。
+--- 启动定时器。
+--- @param timer_context table 定时器上下文。
+--- @param callback_immediately boolean 为 true 则会立刻执行一次回调，不用等到定时时间到。
 function Timer_Start(timer_context, callback_immediately)
 	if (timer_context.callback_func ~= nil and callback_immediately) then
 		timer_context.callback_func()
@@ -53,11 +55,14 @@ function Timer_Start(timer_context, callback_immediately)
 	TIM_START(timer_context.timer_id, timer_context.interval_in_milliseconds)
 end
 
+--- 停止定时器
+--- @param timer_context table 定时器上下文。
 function Timer_Stop(timer_context)
 	TIM_STOP(timer_context.timer_id)
 end
 
--- 检查定时时间是否到了，到了会触发回调。需要在循环中被反复调用。
+--- 检查定时时间是否到了，到了会触发回调。需要在循环中被反复调用。
+--- @param timer_context table 定时器上下文。
 function Timer_Check(timer_context)
 	if (TIM_CHECK(timer_context.timer_id) == 1) then
 		if (timer_context.callback_func ~= nil) then
@@ -70,6 +75,8 @@ function Timer_Check(timer_context)
 	end
 end
 
+--- 重置定时器的定时时间到标识。
+--- @param timer_context table 定时器上下文。
 function Timer_Reset(timer_context)
 	TIM_RESET(timer_context.timer_id)
 end
