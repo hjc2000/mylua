@@ -1,14 +1,22 @@
-if (DD == nil) then
-	dofile("pid/PidController.lua")
-end
+Servo_CheckParam()
+Servo_Enable()
 
-local pid_controller_context = PidController_New(0.5, 0.05, 0, 110, -110)
+-- 使能通信转速设置
+Servo_SetEI(10, 1)
 
-local x = 100
-local y = 0
-local e = x - y
-for i = 0, 200 do
-	y = PidController_Input(pid_controller_context, e, true)
-	e = x - y
-	print(y)
+-- 设置定时任务
+local timer1_context = Timer_New(
+	10,
+	true,
+	function()
+		-- 将更新缓存的操作放到定时器中，不要太频繁地写 flash
+		Encoder_UpdateCumulativePulseCache()
+		Transmission_UpdataFractionGear()
+	end
+)
+Timer_Start(timer1_context, true)
+
+while (true)
+do
+	Timer_Check(timer1_context)
 end

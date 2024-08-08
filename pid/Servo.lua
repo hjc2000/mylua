@@ -39,14 +39,16 @@ function Servo_CheckParam()
 	--#endregion
 
 	--#region 通信 EI 分配
+	-- EI9
 	-- EI9 配置为使能
 	if (Servo_GetParam(3, 9) ~= 1) then
 		Servo_SetParam(3, 9, 1)
 	end
 
 	-- EI10
-	if (Servo_GetParam(3, 10) ~= 0) then
-		Servo_SetParam(3, 10, 0)
+	-- EI10 配置为通信转速选择
+	if (Servo_GetParam(3, 10) ~= 18) then
+		Servo_SetParam(3, 10, 18)
 	end
 
 	-- EI11
