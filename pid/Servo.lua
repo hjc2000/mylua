@@ -21,6 +21,8 @@ function Servo_CheckParam()
 		Servo_SetParam(1, 1, 1)
 	end
 
+	Servo_SetVrefFilterTime(10)
+
 	--#region 硬件 EI 分配
 	-- EI1
 	if (Servo_GetParam(3, 1) ~= 0) then
@@ -178,4 +180,16 @@ end
 --- @return number
 function Servo_Vref()
 	return SRV_MON(16) / 100
+end
+
+--- 伺服的模拟输入电压端子的滤波时间常数。单位：ms
+--- @return number
+function Servo_VrefFilterTime()
+	return Servo_GetParam(3, 49) / 100
+end
+
+--- 设置伺服的模拟输入电压端子的滤波时间常数。单位：ms
+--- @param value number
+function Servo_SetVrefFilterTime(value)
+	Servo_SetParam(3, 49, math.floor(value * 100))
 end
