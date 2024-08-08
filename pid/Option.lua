@@ -42,12 +42,15 @@ function Option_ExpectedVoltage()
 	return DD(106) / 100
 end
 
+--#region 是否启动
+
 --- 是否上电后自动运行
 --- @return boolean
 local function Option_AutoStart()
 	return DD(107) ~= 0
 end
 
+-- 如果希望上电自动运行，将 DD0 设置为 1.
 if (Option_AutoStart()) then
 	DD(0, 1)
 end
@@ -57,3 +60,5 @@ end
 function Option_Start()
 	return DD(0) ~= 0
 end
+
+--#endregion
