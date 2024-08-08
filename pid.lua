@@ -189,7 +189,7 @@ function Servo_SetParam(group, index, value)
 end
 
 --- 检查参数。参数不对会设置参数
-function Servo_CheckParam()
+function Servo_ConfigParam()
 	-- 速度控制模式
 	if (Servo_GetParam(1, 1) ~= 1) then
 		Servo_SetParam(1, 1, 1)
@@ -445,7 +445,7 @@ end
 
 --#region main
 
-Servo_CheckParam()
+Servo_ConfigParam()
 Servo_Enable()
 Servo_SetSpeed(0)
 

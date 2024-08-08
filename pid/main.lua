@@ -1,4 +1,4 @@
-Servo_CheckParam()
+Servo_ConfigParam()
 Servo_Enable()
 Servo_SetSpeed(0)
 

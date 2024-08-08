@@ -14,120 +14,79 @@ function Servo_SetParam(group, index, value)
 	SRV_PARA(group, index, value)
 end
 
---- 检查参数。参数不对会设置参数
-function Servo_CheckParam()
+--- 配置伺服参数
+function Servo_ConfigParam()
 	-- 速度控制模式
-	if (Servo_GetParam(1, 1) ~= 1) then
-		Servo_SetParam(1, 1, 1)
-	end
-
+	Servo_SetParam(1, 1, 1)
 	Servo_SetVrefFilterTime(10)
 
 	--#region 硬件 EI 分配
 	-- EI1
-	if (Servo_GetParam(3, 1) ~= 0) then
-		Servo_SetParam(3, 1, 0)
-	end
+	Servo_SetParam(3, 1, 0)
+
 	-- EI2
-	if (Servo_GetParam(3, 2) ~= 0) then
-		Servo_SetParam(3, 2, 0)
-	end
+	Servo_SetParam(3, 2, 0)
+
 	-- EI3
-	if (Servo_GetParam(3, 3) ~= 0) then
-		Servo_SetParam(3, 3, 0)
-	end
+	Servo_SetParam(3, 3, 0)
+
 	-- EI4
-	if (Servo_GetParam(3, 4) ~= 0) then
-		Servo_SetParam(3, 4, 0)
-	end
+	Servo_SetParam(3, 4, 0)
+
 	-- EI5
-	if (Servo_GetParam(3, 5) ~= 0) then
-		Servo_SetParam(3, 5, 0)
-	end
+	Servo_SetParam(3, 5, 0)
 	--#endregion
 
 	--#region 通信 EI 分配
 	-- EI9
 	-- EI9 配置为使能
-	if (Servo_GetParam(3, 9) ~= 1) then
-		Servo_SetParam(3, 9, 1)
-	end
+	Servo_SetParam(3, 9, 1)
 
 	-- EI10
 	-- EI10 配置为通信转速选择
-	if (Servo_GetParam(3, 10) ~= 18) then
-		Servo_SetParam(3, 10, 18)
-	end
+	Servo_SetParam(3, 10, 18)
 
 	-- EI11
-	if (Servo_GetParam(3, 11) ~= 0) then
-		Servo_SetParam(3, 11, 0)
-	end
+	Servo_SetParam(3, 11, 0)
 
 	-- EI12
-	if (Servo_GetParam(3, 12) ~= 0) then
-		Servo_SetParam(3, 12, 0)
-	end
+	Servo_SetParam(3, 12, 0)
 
 	-- EI13
-	if (Servo_GetParam(3, 13) ~= 0) then
-		Servo_SetParam(3, 13, 0)
-	end
+	Servo_SetParam(3, 13, 0)
 
 	-- EI14
-	if (Servo_GetParam(3, 14) ~= 0) then
-		Servo_SetParam(3, 14, 0)
-	end
+	Servo_SetParam(3, 14, 0)
 
 	-- EI15
-	if (Servo_GetParam(3, 15) ~= 0) then
-		Servo_SetParam(3, 15, 0)
-	end
+	Servo_SetParam(3, 15, 0)
 
 	-- EI16
-	if (Servo_GetParam(3, 16) ~= 0) then
-		Servo_SetParam(3, 16, 0)
-	end
+	Servo_SetParam(3, 16, 0)
 
 	-- EI17
-	if (Servo_GetParam(3, 17) ~= 0) then
-		Servo_SetParam(3, 17, 0)
-	end
+	Servo_SetParam(3, 17, 0)
 
 	-- EI18
-	if (Servo_GetParam(3, 18) ~= 0) then
-		Servo_SetParam(3, 18, 0)
-	end
+	Servo_SetParam(3, 18, 0)
 
 	-- EI19
-	if (Servo_GetParam(3, 19) ~= 0) then
-		Servo_SetParam(3, 19, 0)
-	end
+	Servo_SetParam(3, 19, 0)
 
 	-- EI20
-	if (Servo_GetParam(3, 20) ~= 0) then
-		Servo_SetParam(3, 20, 0)
-	end
+	Servo_SetParam(3, 20, 0)
 
 	-- EI21
-	if (Servo_GetParam(3, 21) ~= 0) then
-		Servo_SetParam(3, 21, 0)
-	end
+	Servo_SetParam(3, 21, 0)
 
 	-- EI22
-	if (Servo_GetParam(3, 22) ~= 0) then
-		Servo_SetParam(3, 22, 0)
-	end
+	Servo_SetParam(3, 22, 0)
 
 	-- EI23
-	if (Servo_GetParam(3, 23) ~= 0) then
-		Servo_SetParam(3, 23, 0)
-	end
+	Servo_SetParam(3, 23, 0)
 
 	-- EI24
-	if (Servo_GetParam(3, 24) ~= 0) then
-		Servo_SetParam(3, 24, 0)
-	end
+	Servo_SetParam(3, 24, 0)
 	--#endregion
 end
 
