@@ -1,14 +1,20 @@
---获取伺服参数
+--- 获取伺服参数
+--- @param group integer 组索引
+--- @param index integer 参数子索引
+--- @return number 参数值
 function Servo_GetParam(group, index)
 	return SRV_PARA(group, index)
 end
 
--- 设置伺服参数
+--- 设置伺服参数
+--- @param group integer 组索引
+--- @param index integer 参数子索引
+--- @param value number 参数值
 function Servo_SetParam(group, index, value)
 	SRV_PARA(group, index, value)
 end
 
--- 检查参数。参数不对会设置参数
+--- 检查参数。参数不对会设置参数
 function Servo_CheckParam()
 	-- 速度控制模式
 	if (Servo_GetParam(1, 1) ~= 1) then
@@ -123,17 +129,22 @@ function Servo_CheckParam()
 	--#endregion
 end
 
--- 获取 EI
+--- 获取 EI
+--- @param ei_index integer EI 索引
+--- @return integer EI 值。会是 0 或 1。
 function Servo_GetEI(ei_index)
 	return SRV_EI(ei_index)
 end
 
--- 设置 EI
+--- 设置 EI
+--- @param ei_index integer EI 索引。
+--- @param value integer EI 值。只能是 0 或 1。
 function Servo_SetEI(ei_index, value)
 	SRV_EI(ei_index, value)
 end
 
--- 让 EI 接收到一个上升沿
+--- 让 EI 接收到一个上升沿
+--- @param ei_index integer EI 索引
 function Servo_TriggerEIRisingEdge(ei_index)
 	Servo_SetEI(ei_index, 0)
 	Delay(5)
@@ -142,12 +153,13 @@ function Servo_TriggerEIRisingEdge(ei_index)
 	Servo_SetEI(ei_index, 0)
 end
 
--- 重启伺服
+--- 重启伺服
 function Servo_Restart()
 	Servo_SetParam(3, 98, 9999)
 end
 
--- 设置转速
+--- 设置转速
+--- @param value number
 function Servo_SetSpeed(value)
 	AXIS_SPEED(value)
 end
@@ -164,6 +176,6 @@ end
 
 --- 模拟输入电压。单位：V
 --- @return number
-function Sservo_Vref()
+function Servo_Vref()
 	return SRV_MON(16) / 100
 end

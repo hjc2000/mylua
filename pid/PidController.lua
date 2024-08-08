@@ -56,3 +56,24 @@ function PidController_Input(context, x)
 
 	return context.p + context.i + context.d
 end
+
+--- 更改 PID 控制器的参数
+--- @param context table 上下文
+--- @param kp number 比例
+--- @param ki number 积分
+--- @param kd number 微分
+--- @param integral_separation_threshold number 积分分离阈值
+--- @param integral_positive_saturation number 积分正饱和
+--- @param integral_negative_saturation number 积分负饱和
+function PidController_ChangeParameters(context,
+										kp, ki, kd,
+										integral_separation_threshold,
+										integral_positive_saturation,
+										integral_negative_saturation)
+	context.kp = kp
+	context.ki = ki
+	context.kd = kd
+	context.integral_separation_threshold = integral_separation_threshold
+	context.integral_positive_saturation = integral_positive_saturation
+	context.integral_negative_saturation = integral_negative_saturation
+end
