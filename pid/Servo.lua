@@ -162,22 +162,18 @@ function Servo_SetDecelerationTime(value)
 	AXIS_DECEL(value)
 end
 
--- 设置绝对位置。需要启动定位运行才会真正运行，否则只是设置一个立即数。
-function Servo_SetAbsolutePosition(value)
-	AXIS_MOVEABS(value)
-end
-
--- 设置相对位置。需要启动定位运行才会真正运行，否则只是设置一个立即数。
-function Servo_SetRelativePosition(value)
-	AXIS_MOVE(value)
-end
-
--- 使能
+--- 使能
 function Servo_Enable()
 	Servo_SetEI(9, 1)
 end
 
--- 失能
+--- 失能
 function Servo_Disable()
 	Servo_SetEI(9, 0)
+end
+
+--- 模拟输入电压
+--- @return number
+function Sservo_Vref()
+	return SRV_MON(16)
 end
