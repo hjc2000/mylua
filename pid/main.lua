@@ -34,6 +34,14 @@ local timer1_context = Timer_New(
 		if (Option_Start()) then
 			local e = Option_ExpectedVoltage() - Servo_Vref()
 			local speed = PidController_Input(pid_controller_context, e)
+
+			-- 转速限幅
+			if (speed < Option_MinSpeed()) then
+				speed = Option_MinSpeed()
+			elseif (speed > Option_MaxSpeed()) then
+				speed = Option_MaxSpeed()
+			end
+
 			Servo_SetSpeed(speed)
 		else
 			Servo_SetSpeed(0)

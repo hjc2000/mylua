@@ -62,3 +62,20 @@ function Option_Start()
 end
 
 --#endregion
+
+--- 最大转速
+--- @return integer
+function Option_MaxSpeed()
+	local max = DD(108)
+	if (max < Option_MinSpeed()) then
+		max = Option_MinSpeed()
+	end
+
+	return max
+end
+
+--- 最小转速
+--- @return integer
+function Option_MinSpeed()
+	return DD(109)
+end
