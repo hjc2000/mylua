@@ -152,16 +152,6 @@ function Servo_SetSpeed(value)
 	AXIS_SPEED(value)
 end
 
--- 设置加速时间。单位：毫秒。
-function Servo_SetAccelerationTime(value)
-	AXIS_ACCEL(value)
-end
-
--- 设置减速时间。单位：毫秒。
-function Servo_SetDecelerationTime(value)
-	AXIS_DECEL(value)
-end
-
 --- 使能
 function Servo_Enable()
 	Servo_SetEI(9, 1)
@@ -172,8 +162,8 @@ function Servo_Disable()
 	Servo_SetEI(9, 0)
 end
 
---- 模拟输入电压
+--- 模拟输入电压。单位：V
 --- @return number
 function Sservo_Vref()
-	return SRV_MON(16)
+	return SRV_MON(16) / 100
 end
