@@ -7,6 +7,7 @@ end
 --- 构造一个新的定时器。会自动分配空闲的定时器。
 --- 如果没有空闲的定时器，会返回 nil，否则返回定时器上下文
 --- 需要用 Timer_Start 函数启动定时器。
+---
 --- @param interval_in_milliseconds integer 定时周期。单位：ms
 ---
 --- @param auto_reset boolean 每次定时时间到后，触发回调后是否自动重置定时时间到标识。
