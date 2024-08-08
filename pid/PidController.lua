@@ -1,7 +1,7 @@
 --- 新建一个PID控制器。
---- @param kp number
---- @param ki number
---- @param kd number
+--- @param kp number 比例
+--- @param ki number 积分
+--- @param kd number 微分
 --- @param integral_separation_threshold number 积分分离阈值
 --- @param integral_positive_saturation number 积分正饱和
 --- @param integral_negative_saturation number 积分负饱和
