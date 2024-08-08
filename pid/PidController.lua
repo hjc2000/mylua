@@ -28,8 +28,13 @@ end
 
 --- 向PID控制器输入一个值并得到输出。
 --- @param context table PID控制器上下文。
+--- @param x number 输入值
 --- @return number PID输出
-function PidController_Input(context)
+function PidController_Input(context, x)
+	context.x2 = context.x1
+	context.x1 = context.x0
+	context.x0 = x
+
 	local p = context.kp * (context.x0 - context.x1)
 
 	local i = 0
