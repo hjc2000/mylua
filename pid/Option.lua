@@ -34,3 +34,10 @@ end
 function Option_IntegralNegativeSaturation()
 	return DD(5)
 end
+
+--- 期望的电压。
+--- 触摸屏使用整型进行设置，单位为 0.01V. 脚本中获取到值后除以 100，转换为 V。
+--- @return number
+function Option_ExpectedVoltage()
+	return DD(6) / 100
+end

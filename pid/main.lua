@@ -30,10 +30,12 @@ local timer1_context = Timer_New(
 			Option_IntegralNegativeSaturation()
 		)
 
-		local speed = PidController_Input(pid_controller_context, Servo_Vref())
+		local e = Option_ExpectedVoltage() - Servo_Vref()
+		local speed = PidController_Input(pid_controller_context, e)
 		Servo_SetSpeed(speed)
 	end
 )
+
 Timer_Start(timer1_context, true)
 
 while (true)
