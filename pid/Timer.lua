@@ -12,7 +12,7 @@ function Timer_New(interval_in_milliseconds, auto_reset, callback_func)
 
 	local timer_context = {}
 
-	for i = 0, 30 do
+	for i = 0, 29 do
 		if G_timer_usage_states[i] ~= true then
 			G_timer_usage_states[i] = true
 			timer_context.timer_id = i

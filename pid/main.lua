@@ -20,7 +20,7 @@ local timer1_context = Timer_New(
 	10,
 	true,
 	function()
-		-- 更新 PID 系数
+		-- 更新 PID 控制器参数
 		PidController_ChangeParameters(
 			pid_controller_context,
 			Option_PID_KP(),
