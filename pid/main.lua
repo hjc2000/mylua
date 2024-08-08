@@ -1,5 +1,6 @@
 Servo_CheckParam()
 Servo_Enable()
+Servo_SetSpeed(0)
 
 -- 使能通信转速设置
 Servo_SetEI(10, 1)
@@ -30,9 +31,13 @@ local timer1_context = Timer_New(
 			Option_IntegralNegativeSaturation()
 		)
 
-		local e = Option_ExpectedVoltage() - Servo_Vref()
-		local speed = PidController_Input(pid_controller_context, e)
-		Servo_SetSpeed(speed)
+		if (Option_Start()) then
+			local e = Option_ExpectedVoltage() - Servo_Vref()
+			local speed = PidController_Input(pid_controller_context, e)
+			Servo_SetSpeed(speed)
+		else
+			Servo_SetSpeed(0)
+		end
 	end
 )
 
