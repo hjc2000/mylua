@@ -133,7 +133,7 @@ function PidController_Input(context, x)
 	context.x0 = x
 
 	context.p = context.p + context.kp * (context.x0 - context.x1)
-
+	-- context.p = context.kp * context.x0
 	if (math.abs(x) <= context.integral_separation_threshold) then
 		-- 偏差减小，投入积分
 		context.i = context.i + context.ki * context.x0
@@ -147,6 +147,7 @@ function PidController_Input(context, x)
 	end
 
 	context.d = context.d + context.kd * (context.x0 - 2 * context.x1 + context.x2)
+	-- context.d = context.kd * (context.x0 - context.x1)
 
 	return context.p + context.i + context.d
 end
