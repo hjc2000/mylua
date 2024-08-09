@@ -16,11 +16,12 @@ function Option_PID_KD()
 	return DD(102)
 end
 
---- 积分分离阈值。在偏差量的绝对值大于此值时不进行积分累加，偏差量绝对值小于此值后
+--- 积分分离阈值。单位：0.01V
+--- 在偏差量的绝对值大于此值时不进行积分累加，偏差量绝对值小于此值后
 --- 才开始进行积分累加。
 --- @return number
 function Option_IntegralSeparationThreshold()
-	return DD(103)
+	return DD(103) / 100
 end
 
 --- 积分环节的正向饱和值。
@@ -35,7 +36,7 @@ function Option_IntegralNegativeSaturation()
 	return DD(105)
 end
 
---- 期望的电压。
+--- 期望的电压。单位：0.01V
 --- 触摸屏使用整型进行设置，单位为 0.01V. 脚本中获取到值后除以 100，转换为 V。
 --- @return number
 function Option_ExpectedVoltage()
