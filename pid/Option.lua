@@ -1,46 +1,45 @@
 --- PID 的比例系数
 --- @return number
 function Option_PID_KP()
-	return DD(100)
+	return DF(100)
 end
 
 --- PID 的积分系数
 --- @return number
 function Option_PID_KI()
-	return DD(101)
+	return DF(101)
 end
 
 --- PID 的微分系数
 --- @return number
 function Option_PID_KD()
-	return DD(102)
+	return DF(102)
 end
 
---- 积分分离阈值。单位：0.01V
+--- 积分分离阈值。单位：V
 --- 在偏差量的绝对值大于此值时不进行积分累加，偏差量绝对值小于此值后
 --- 才开始进行积分累加。
 --- @return number
 function Option_IntegralSeparationThreshold()
-	return DD(103) / 100
+	return DF(103)
 end
 
 --- 积分环节的正向饱和值。
 --- @return number
 function Option_IntegralPositiveSaturation()
-	return DD(104)
+	return DF(104)
 end
 
 --- 积分环节的负向饱和值。
 --- @return number
 function Option_IntegralNegativeSaturation()
-	return DD(105)
+	return DF(105)
 end
 
---- 期望的电压。单位：0.01V
---- 触摸屏使用整型进行设置，单位为 0.01V. 脚本中获取到值后除以 100，转换为 V。
+--- 期望的电压。单位：V
 --- @return number
 function Option_ExpectedVoltage()
-	return DD(106) / 100
+	return DF(106)
 end
 
 --#region 是否启动
@@ -79,4 +78,10 @@ end
 --- @return integer
 function Option_MinSpeed()
 	return DD(109)
+end
+
+--- 对偏差量取相反数。
+--- @return boolean 为true表示需要将偏差量取相反数，为false则不用。
+function Option_TakeTheOppositeOfError()
+	return DD(110) ~= 0
 end

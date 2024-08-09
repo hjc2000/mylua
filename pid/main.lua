@@ -4,6 +4,8 @@ Servo_SetSpeed(0)
 
 -- 使能通信转速设置
 Servo_SetEI(10, 1)
+-- 正转
+Servo_SetEI(11, 1)
 
 -- 初始化 PID 控制器
 local pid_controller_context = PidController_New(
@@ -33,6 +35,10 @@ local timer1_context = Timer_New(
 
 		if (Option_Start()) then
 			local e = Option_ExpectedVoltage() - Servo_Vref()
+			if (Option_TakeTheOppositeOfError()) then
+				e = -e
+			end
+
 			local speed = PidController_Input(pid_controller_context, e)
 
 			-- 转速限幅
@@ -42,8 +48,15 @@ local timer1_context = Timer_New(
 				speed = Option_MaxSpeed()
 			end
 
+			-- 防止写入负数
+			if (speed < 0) then
+				speed = 0
+			end
+
+			DF(1, speed)
 			Servo_SetSpeed(speed)
 		else
+			DF(1, 0)
 			Servo_SetSpeed(0)
 		end
 	end

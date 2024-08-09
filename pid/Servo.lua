@@ -47,7 +47,8 @@ function Servo_ConfigParam()
 	Servo_SetParam(3, 10, 18)
 
 	-- EI11
-	Servo_SetParam(3, 11, 0)
+	-- 正转指令
+	Servo_SetParam(3, 11, 2)
 
 	-- EI12
 	Servo_SetParam(3, 12, 0)
