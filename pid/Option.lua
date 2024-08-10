@@ -24,18 +24,6 @@ function Option_IntegralSeparationThreshold()
 	return DF(103)
 end
 
---- 积分环节的正向饱和值。
---- @return number
-function Option_IntegralPositiveSaturation()
-	return DF(104)
-end
-
---- 积分环节的负向饱和值。
---- @return number
-function Option_IntegralNegativeSaturation()
-	return DF(105)
-end
-
 --- 期望的电压。单位：V
 --- @return number
 function Option_ExpectedVoltage()
