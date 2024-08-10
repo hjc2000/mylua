@@ -13,8 +13,8 @@ local pid_controller_context = PidController_New(
 	Option_PID_KI(),
 	Option_PID_KD(),
 	Option_IntegralSeparationThreshold(),
-	Option_IntegralPositiveSaturation(),
-	Option_IntegralNegativeSaturation()
+	Option_MaxSpeed(),
+	Option_MinSpeed()
 )
 
 -- 设置定时任务
@@ -29,8 +29,8 @@ local timer1_context = Timer_New(
 			Option_PID_KI(),
 			Option_PID_KD(),
 			Option_IntegralSeparationThreshold(),
-			Option_IntegralPositiveSaturation(),
-			Option_IntegralNegativeSaturation()
+			Option_MaxSpeed(),
+			Option_MinSpeed()
 		)
 
 		if (Option_Start()) then
@@ -40,13 +40,6 @@ local timer1_context = Timer_New(
 			end
 
 			local speed = PidController_Input(pid_controller_context, e)
-
-			-- 转速限幅
-			if (speed < Option_MinSpeed()) then
-				speed = Option_MinSpeed()
-			elseif (speed > Option_MaxSpeed()) then
-				speed = Option_MaxSpeed()
-			end
 
 			-- 防止写入负数
 			if (speed < 0) then
@@ -61,6 +54,12 @@ local timer1_context = Timer_New(
 		end
 	end
 )
+
+-- 定时器耗尽
+if (timer1_context == nil) then
+	Servo_Disable()
+	return
+end
 
 Timer_Start(timer1_context, true)
 

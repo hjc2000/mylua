@@ -15,7 +15,7 @@ end
 --- 如果不自动重置，则必须手动重置，否则即使定时时间没到，Timer_Check 也会触发回调。
 ---
 --- @param callback_func function 回调函数。
---- @return table 定时器上下文。
+--- @return table|nil 定时器上下文。
 function Timer_New(interval_in_milliseconds, auto_reset, callback_func)
 	-- 数组，索引为 n 的位置为 true 表示定时器 ID 是 n 的定时器正在被使用
 	G_timer_usage_states = {}
